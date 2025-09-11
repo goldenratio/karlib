@@ -6,7 +6,7 @@
  * @param assertion - The error message to throw if the assertion fails.
  * @throws {Error} If `obj` is `undefined` or `null`.
  */
-export function assertExists(obj: unknown, assertion: string): void {
+export function assert_exists(obj: unknown, assertion: string): void {
   if (typeof obj === 'undefined' || obj === null) {
     throw new Error(assertion);
   }
@@ -19,7 +19,7 @@ export function assertExists(obj: unknown, assertion: string): void {
  * @param value - The value that should never be reached.
  * @throws {Error} Always throws an error with the unhandled case message.
  */
-export function assertNever(value: never): never {
+export function assert_never(value: never): never {
   throw new Error('unhandled case ', value);
 }
 
@@ -31,7 +31,7 @@ export function assertNever(value: never): never {
  * @param assertion - The error message to throw if the assertion fails.
  * @throws {Error} If `value` is `false`.
  */
-export function assertTrue(value: boolean, assertion: string): void {
+export function assert_true(value: boolean, assertion: string): void {
   if (!value) {
     throw new Error(assertion);
   }
@@ -47,6 +47,6 @@ export function assertTrue(value: boolean, assertion: string): void {
  * @throws {Error} If `value` is `null` or `undefined`.
  */
 export function unwrap<T>(value: T | null | undefined, assertion: string): T {
-  assertExists(value, assertion);
+  assert_exists(value, assertion);
   return value as T;
 }
