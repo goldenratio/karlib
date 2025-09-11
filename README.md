@@ -10,7 +10,7 @@
 
 ### NPM
 
-> npm install --save karlib
+> npm install --save @goldenratio/karlib
 
 ## Basic Usage
 
