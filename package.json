@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rm -rf target js",
     "build": "npm run clean && tsc && node ./build.js",
-    "version": "npm run clean && npm run build",
+    "version": "npm run build",
     "postversion": "git push && git push --tags"
   },
   "repository": {
