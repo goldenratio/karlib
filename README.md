@@ -12,6 +12,8 @@
 
 > npm install --save @goldenratio/karlib
 
+https://www.npmjs.com/package/@goldenratio/karlib
+
 ## Basic Usage
 
 ```js
