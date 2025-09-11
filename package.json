@@ -1,7 +1,7 @@
 {
   "name": "@goldenratio/karlib",
   "version": "0.0.3",
-  "description": "A minimal HTML5 canvas library, fine tined for web games developement",
+  "description": "A minimal HTML5 canvas library, fine tuned for web games developement",
   "type": "module",
   "module": "./target/karlib.js",
   "types": "./target/types/index.d.ts",
