@@ -6,7 +6,9 @@
     "moduleResolution": "nodenext",
     "lib": [ "ESNext", "DOM" ],
     "target": "esnext",
-    "outDir": "js"
+    "outDir": "js",
+    "declarationDir": "target/types",
+    "declaration": true,
   },
   "include": [
     "./src"

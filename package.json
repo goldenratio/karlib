@@ -13,7 +13,7 @@
   },
   "scripts": {
     "clean": "rm -rf target js",
-    "build": "npm run clean && node ./build.js"
+    "build": "npm run clean && tsc && node ./build.js"
   },
   "repository": {
     "type": "git",

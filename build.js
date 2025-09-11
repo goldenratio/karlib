@@ -40,7 +40,7 @@ async function main() {
     treeShaking: true,
     bundle: true,
     minify: false,
-    sourcemap: false,
+    sourcemap: true,
     drop: ["console", "debugger"]
   });
 
