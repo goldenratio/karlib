@@ -6,8 +6,6 @@ import { createGzip } from 'node:zlib';
 
 import { build } from "esbuild";
 
-const destDir = "dist";
-
 function bytes_to_kilobytes(bytes) {
   const value = bytes / 1024;
   return Math.round(value * 100) / 100;
@@ -31,10 +29,13 @@ async function get_gzip_size(filePath) {
 async function main() {
   const startTime = Date.now();
 
-  console.log("Building...");
+  const src_path = path.join("src", "index.ts");
+  const dest_path = path.join("target", "karlib.js");
+
+  console.log(`Building... ${src_path} -> ${dest_path}`);
   await build({
-    entryPoints: [path.join("src", "index.ts")],
-    outfile: path.join("target", "karlib.js"),
+    entryPoints: [src_path],
+    outfile: dest_path,
     format: "esm",
     target: "esnext",
     treeShaking: true,
@@ -44,7 +45,9 @@ async function main() {
     drop: ["console", "debugger"]
   });
 
-  console.log(`\nBuild finished in ${Date.now() - startTime}ms`);
+  console.log(`Build finished in ${Date.now() - startTime}ms`);
+  const gzip_size = await get_gzip_size(dest_path);
+  console.log(`${bytes_to_kilobytes(gzip_size)} kb (gzip)`);
 }
 
 main();
