@@ -6,7 +6,7 @@ export interface Disposable {
 
 export type DisposeCallback = () => void;
 
-export function isDisposable(object: unknown): object is Disposable {
+export function is_disposable(object: unknown): object is Disposable {
   return (
     typeof object === 'object'
     && object !== null
@@ -25,7 +25,7 @@ export class DisposeBag implements Disposable {
     }
     if (typeof item === 'function') {
       this._list.add(() => item());
-    } else if (isDisposable(item)) {
+    } else if (is_disposable(item)) {
       this._list.add(() => item.dispose());
     } else {
       throw new Error(`${item as string} doesn't contain dispose method`);
