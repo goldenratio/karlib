@@ -1,0 +1,338 @@
+import { unwrap } from "./assert_utils.js";
+import type { EnvProvider } from "./env_provider/env_provider.js";
+import { degree_to_radians } from "./math_utils.js";
+import { Texture } from "./texture.js";
+import { TextureUtil } from "./texture_utils.js";
+import type {
+  DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
+  DrawTextureOptions, DrawTextureTileOptions, InitOptions,
+  Size
+} from "./types.js";
+import { ScaleMode } from "./types.js";
+
+export class Karlib {
+  private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+  private readonly canvas_size: Size;
+  private readonly texture_util: TextureUtil;
+  private readonly env: EnvProvider;
+  private readonly res_textures = new Map<string, Texture>();
+  private readonly pixel_perfect: boolean;
+
+  constructor(options: InitOptions) {
+    const { canvas, env, pixel_perfect } = options;
+    this.pixel_perfect = pixel_perfect;
+    this.env = env;
+    this.canvas_size = { width: canvas.width, height: canvas.height };
+
+    const ctx = unwrap(canvas.getContext('2d', {
+      alpha: false,
+      // setting `desynchronized` to true, doesn't render in linux X11 chromium browsers
+      // desynchronized: true,
+      willReadFrequently: false,
+    }), "Unable to get 2D rendering context");
+
+    this.context2d = ctx as CanvasRenderingContext2D;
+    this.texture_util = new TextureUtil(env);
+  }
+
+  async load_texture(image_file_path: string): Promise<Texture | undefined> {
+    return new Promise(async (resolve) => {
+      const img = await this.env.load_image(image_file_path);
+      const scale_mode = this.pixel_perfect ? ScaleMode.Nearest : ScaleMode.Nearest;
+      const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
+      if (texture) {
+        this.res_textures.set(image_file_path, texture);
+      }
+      resolve(texture);
+    });
+  }
+
+  clear_background(color: string): void {
+    const ctx = this.context2d;
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
+    ctx.restore();
+  }
+
+  draw_line(options: DrawLineOptions): void {
+    const { start, end, fill_style, thickness = 1, lineCap = "butt" } = options;
+
+    const ctx = this.context2d;
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.lineWidth = thickness;
+    ctx.strokeStyle = fill_style;
+    ctx.lineCap = lineCap;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  draw_rectangle(options: DrawRectangleOptions): void {
+    const {
+      width, height,
+      x = 0, y = 0, fill_style = "#ff0000",
+      outline_size = 0, outline_style = "#ffffff",
+      rotate = 0, pivot = { x: 0, y: 0 },
+      scale = 1, alpha = 1,
+    } = options;
+
+    const ctx = this.context2d;
+
+    const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * width : pivot.x;
+    const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * height : pivot.y;
+
+    const sx = typeof scale === "number" ? scale : scale.x;
+    const sy = typeof scale === "number" ? scale : scale.y;
+
+    if (sx === 0 || sy === 0 || alpha === 0) {
+      return;
+    }
+
+    // Fast path: no rotation and pivot at top-left → keep your crisp stroke behavior
+    const noRotation = rotate === 0 && pivot_x === 0 && pivot_y === 0;
+
+    if (noRotation) {
+      ctx.save();
+      ctx.globalAlpha = ctx.globalAlpha * alpha;
+
+      ctx.fillStyle = fill_style;
+      ctx.fillRect(x, y, width, height);
+
+      if (outline_size > 0) {
+        ctx.lineWidth = outline_size;
+        ctx.strokeStyle = outline_style;
+
+        // Half-pixel alignment for odd line widths
+        const align = (outline_size % 2 === 1) ? 0.5 : 0;
+        ctx.strokeRect(align + x, align + y, width - 2 * align, height - 2 * align);
+      }
+      ctx.restore();
+      return;
+    }
+
+    // General path: translate to world pivot, rotate, then draw rect offset by -pivot
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+
+    ctx.translate(x + pivot_x, y + pivot_y);
+    if (sx !== 1 || sy !== 1) {
+      ctx.scale(sx, sy);
+    }
+
+    ctx.rotate(degree_to_radians(rotate));
+
+    // Fill
+    ctx.fillStyle = fill_style;
+    ctx.fillRect(-pivot_x, -pivot_y, width, height);
+
+    // Outline (can’t guarantee pixel-perfect crispness under rotation)
+    if (outline_size > 0) {
+      ctx.lineWidth = outline_size;
+      ctx.strokeStyle = outline_style;
+      ctx.strokeRect(-pivot_x, -pivot_y, width, height);
+    }
+
+    ctx.restore();
+  }
+
+  draw_circle(options: DrawCircleOptions): void {
+    const {
+      radius,
+      x = 0, y = 0, fill_style = "#ff0000",
+      outline_size = 0, outline_style = "#ffffff",
+      pivot = { x: 0, y: 0 },
+      scale = 1, alpha = 1,
+    } = options;
+
+    const ctx = this.context2d;
+
+    // The circle’s bounding box is diameter x diameter
+    const diameter = radius * 2;
+
+    // If pivot supplied in [0..1], convert to pixels. Otherwise assume pixels.
+    const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * diameter : pivot.x;
+    const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * diameter : pivot.y;
+
+    // Top-left of the bounding box = (x - pivot_x, y - pivot_y)
+    // Circle center is top-left + (radius, radius)
+    const cx = x - pivot_x + radius;
+    const cy = y - pivot_y + radius;
+
+    const sx = typeof scale === "number" ? scale : scale.x;
+    const sy = typeof scale === "number" ? scale : scale.y;
+
+    if (sx === 0 || sy === 0 || alpha === 0) {
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+
+    if (sx !== 1 || sy !== 1) {
+      ctx.scale(sx, sy);
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = fill_style;
+    ctx.fill();
+
+    if (outline_size > 0) {
+      ctx.lineWidth = outline_size;
+      ctx.strokeStyle = outline_style;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  draw_texture(options: DrawTextureOptions): void {
+    const {
+      texture,
+      x = 0, y = 0, rotate = 0, width, height,
+      pivot = { x: 0, y: 0 }, scale = 1, alpha = 1,
+      tint_color, tint_alpha = 1,
+      source_rect,
+    } = options;
+
+    const ctx = this.context2d;
+
+    const w = width ?? texture.get_width();
+    const h = height ?? texture.get_height();
+
+    // If pivot supplied in [0..1], convert to pixels. If >=1 (or negative), assume pixels.
+    const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * w : pivot.x;
+    const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * h : pivot.y;
+
+    const sx = typeof scale === "number" ? scale : scale.x;
+    const sy = typeof scale === "number" ? scale : scale.y;
+
+    if (sx === 0 || sy === 0 || alpha === 0) {
+      return;
+    }
+
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+    ctx.translate(x, y);
+
+    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    ctx.imageSmoothingEnabled = smooth_texture;
+
+    if (sx !== 1 || sy !== 1) {
+      ctx.scale(sx, sy);
+    }
+
+    if (rotate > 0) {
+      ctx.rotate(degree_to_radians(rotate));
+    }
+
+    const image = typeof tint_color === "undefined"
+      ? texture.get_src()
+      : this.texture_util.get_tinted_texture(texture, tint_color, tint_alpha).get_src();
+
+    if (typeof image !== "undefined") {
+      if (typeof source_rect === "undefined") {
+        ctx.drawImage(image, -pivot_x, -pivot_y, w, h);
+      } else {
+        const { x: sx, y: sy, width: sw, height: sh } = source_rect;
+        ctx.drawImage(image, sx, sy, sw, sh, -pivot_x, -pivot_y, w, h)
+      }
+    }
+    ctx.restore();
+  }
+
+  draw_texture_tile(options: DrawTextureTileOptions): void {
+    const {
+      texture,
+      x = 0, y = 0, width, height,
+      tile_position_x = 0, tile_position_y = 0,
+      tile_scale, tile_rotate = 0, tile_alpha = 1,
+    } = options;
+
+    const ctx = this.context2d;
+
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
+    ctx.translate(x, y);
+
+    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    ctx.imageSmoothingEnabled = smooth_texture;
+
+    const pattern = this.texture_util.get_canvas_pattern(texture);
+    if (!pattern) {
+      ctx.restore();
+      return;
+    }
+
+    let matrix: DOMMatrix;
+
+    if (typeof tile_scale !== "undefined") {
+      const sx = typeof tile_scale === "number" ? tile_scale : tile_scale.x;
+      const sy = typeof tile_scale === "number" ? tile_scale : tile_scale.y;
+      matrix = matrix ?? this.env.create_dom_matrix();
+      matrix = matrix.scale(sx, sy);
+    }
+
+    if (tile_position_x !== 0 || tile_position_y !== 0) {
+      matrix = matrix ?? this.env.create_dom_matrix();
+      matrix = matrix.translate(tile_position_x, tile_position_y);
+    }
+
+    if (tile_rotate !== 0) {
+      matrix = matrix ?? this.env.create_dom_matrix();
+      matrix = matrix.rotate(tile_rotate); // degrees
+    }
+
+    if (matrix) {
+      pattern.setTransform(matrix);
+    }
+
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.restore();
+
+  }
+
+  get_context_2d(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
+    return this.context2d;
+  }
+
+  get_canvas_width(): number {
+    return this.canvas_size.width;
+  }
+
+  get_canvas_height(): number {
+    return this.canvas_size.height;
+  }
+
+  get_tinted_texture(source: Texture, tint_color: string, tint_alpha: number): Texture {
+    return this.texture_util.get_tinted_texture(source, tint_color, tint_alpha);
+  }
+
+  get_env(): EnvProvider {
+    return this.env;
+  }
+
+  /**
+   * Dispose the karlib instance.
+   * Once dispose is called, the karlib instance should not be re-used
+   */
+  dispose(): void {
+    this.texture_util.dispose();
+    for (const texture of this.res_textures.values()) {
+      texture.dispose();
+    }
+    this.res_textures.clear();
+
+    // Break references for GC
+    // @ts-expect-error intentional nulling out
+    this.context2d = null;
+    // @ts-expect-error intentional nulling out
+    this.canvas = null;
+  }
+}

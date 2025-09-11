@@ -1,0 +1,39 @@
+{
+  "name": "karlib",
+  "version": "0.0.1",
+  "description": "A minimal HTML5 canvas library, fine tined for web games developement",
+  "type": "module",
+  "module": "./target/karlib.js",
+  "types": "./target/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./target/types/index.d.ts",
+      "import": "./target/karlib.js"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf target js",
+    "build": "npm run clean && node ./build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goldenratio/karlib.git"
+  },
+  "author": "Karthik Jayakumar",
+  "license": "Zlib",
+  "bugs": {
+    "url": "https://github.com/goldenratio/karlib/issues"
+  },
+  "files": [
+    "target/",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/goldenratio/karlib#readme",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "esbuild": "0.25.9",
+    "typescript": "5.9.2"
+  }
+}
