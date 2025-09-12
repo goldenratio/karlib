@@ -25,37 +25,38 @@ Check [examples](./examples) folder for list of examples to run.
 
 ## Basic Example
 
-```js
-import { BrowserEnv, Karlib, BrowserTicker } from "@goldenratio/karlib";
+```html
+<script type="module">
+  import { BrowserEnv, Karlib, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.js";
 
-async function main() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 800;
-  canvas.height = 600;
-  document.body.appendChild(canvas);
+  async function main() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 800;
+    canvas.height = 600;
+    document.body.appendChild(canvas);
 
-  const kl = new Karlib({
-    canvas: canvas,
-    env: new BrowserEnv(),
-  });
-
-  const update_loop = () => {
-    kl.clear_background("#000");
-    kl.draw_rectangle({
-      x: 100,
-      y: 100,
-      width: 100,
-      height: 100,
-      fill_style: "#ff0000",
+    const kl = new Karlib({
+      canvas: canvas,
+      env: new BrowserEnv(),
     });
+
+    const update_loop = () => {
+      kl.clear_background("#000");
+      kl.draw_rectangle({
+        x: 100,
+        y: 100,
+        width: 100,
+        height: 100,
+        fill_style: "#ff0000",
+      });
+      globalThis.requestAnimationFrame(update_loop);
+    }
+
     globalThis.requestAnimationFrame(update_loop);
   }
 
-  globalThis.requestAnimationFrame(update_loop);
-}
-
-main();
-
+  main();
+</script>
 ```
 
 ## Release
