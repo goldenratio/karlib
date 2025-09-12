@@ -21,12 +21,40 @@ https://www.npmjs.com/package/@goldenratio/karlib
 ```console
 npm run example shape_2d
 ```
-Check `examples` folder for list of examples to run.
+Check [examples](./examples) folder for list of examples to run.
 
-## Basic Usage
+## Basic Example
 
 ```js
-// TODO
+import { BrowserEnv, Karlib, BrowserTicker } from "@goldenratio/karlib";
+
+async function main() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 800;
+  canvas.height = 600;
+  document.body.appendChild(canvas);
+
+  const kl = new Karlib({
+    canvas: canvas,
+    env: new BrowserEnv(),
+  });
+
+  const update_loop = () => {
+    kl.clear_background("#000");
+    kl.draw_rectangle({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill_style: "#ff0000",
+    });
+    globalThis.requestAnimationFrame(update_loop);
+  }
+
+  globalThis.requestAnimationFrame(update_loop);
+}
+
+main();
 
 ```
 
