@@ -40,7 +40,8 @@ Check [examples](./examples) folder for list of examples to run.
       env: new BrowserEnv(),
     });
 
-    const update_loop = () => {
+    const ticker = new BrowserTicker();
+    ticker.on_tick((delta) => {
       kl.clear_background("#000");
       kl.draw_rectangle({
         x: 100,
@@ -49,10 +50,7 @@ Check [examples](./examples) folder for list of examples to run.
         height: 100,
         fill_style: "#ff0000",
       });
-      globalThis.requestAnimationFrame(update_loop);
-    }
-
-    globalThis.requestAnimationFrame(update_loop);
+    });
   }
 
   main();
