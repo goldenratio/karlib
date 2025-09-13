@@ -53,3 +53,10 @@ This keeps raster on the compositor/GPU side more often and frees the main threa
 - Consider desynchronized: true when you create the context if latency matters:<br>
 `canvas.getContext('2d', { desynchronized: true })`<br>
 (This can reduce jank by relaxing synchronization with the compositor; test on your target devices.)
+
+### Useful Reading
+
+- [It's always been you, Canvas2D](https://developer.chrome.com/blog/canvas2d/)
+- [Optimizing canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas)
+- [Improving HTML5 Canvas performance](https://web.dev/articles/canvas-performance)
+- https://www.reddit.com/r/webgl/comments/sc4024/is_webgl_fast_than_canvas_api_for_drawing_a_bunch/
