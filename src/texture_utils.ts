@@ -93,11 +93,12 @@ export async function generate_textures_from_spritesheet_tp(
   env: EnvProvider
 ): Promise<Map<string, Texture>> {
   const result: Map<string, Texture> = new Map();
-  const json_data = await env.load_json<SpriteSheetData>(json_file);
-  if (!json_data) {
+  const json_response = await env.load_json<SpriteSheetData>(json_file);
+  if (!json_response.success) {
     return result;
   }
 
+  const json_data = json_response.data;
   const png_file_path = json_data.meta.image;
   const src_img_data = await env.load_image(png_file_path);
   if (!src_img_data) {

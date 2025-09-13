@@ -124,3 +124,7 @@ export interface LoadImageOptions {
 }
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
+
+export type FetchReponse<TData> =
+  | { readonly success: true, readonly data: TData }
+  | { readonly success: false, readonly error: Error };

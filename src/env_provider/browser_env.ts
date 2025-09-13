@@ -1,5 +1,5 @@
 import { SCALE_MODE } from "../constants.js";
-import type { LoadImageOptions } from "../types/index.js";
+import type { FetchReponse, LoadImageOptions } from "../types/index.js";
 import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
@@ -48,17 +48,17 @@ export class BrowserEnv implements EnvProvider {
     });
   }
 
-  load_json<TResponse>(url: string): Promise<TResponse | undefined> {
-    return new Promise<TResponse>((resolve) => {
+  load_json<TData>(url: string): Promise<FetchReponse<TData>> {
+    return new Promise<FetchReponse<TData>>((resolve) => {
       fetch(url)
         .then(response => {
           if (!response.ok) {
-            throw new Error("err");
+            throw new Error(`HTTP error, status: ${response.status}`);
           }
           return response.json();
         })
-        .then(data => resolve(data))
-        .catch(_error => resolve(undefined));
+        .then(data => resolve({ success: true, data }))
+        .catch(error => resolve({ success: false, error: error as Error }));
     });
   }
 
