@@ -1,4 +1,4 @@
-import type { FixedLenArray, LoadImageOptions, ScaleMode } from "../types.js";
+import type { FixedLenArray, LoadImageOptions, ScaleMode } from "../types/index.js";
 
 export interface EnvProvider {
   create_canvas(width: number, height: number): OffscreenCanvas;

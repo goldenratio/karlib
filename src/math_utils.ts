@@ -1,4 +1,4 @@
-import type { Point, Rectangle } from "./types.js";
+import type { Point, Rectangle } from "./types/index.js";
 
 /**
  * Random integer between min and max. Includes min and max value

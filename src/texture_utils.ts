@@ -44,7 +44,7 @@ export class TextureUtil {
     this.ctx.globalCompositeOperation = "destination-atop";
     this.ctx.globalAlpha = 1;
 
-    const smooth_texture = scale_mode === "linear";
+    const smooth_texture = scale_mode === SCALE_MODE.Linear;
     this.ctx.imageSmoothingEnabled = smooth_texture;
 
     this.ctx.drawImage(texture_src, 0, 0);

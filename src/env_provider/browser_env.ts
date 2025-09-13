@@ -1,5 +1,5 @@
 import { SCALE_MODE } from "../constants.js";
-import type { LoadImageOptions } from "../types.js";
+import type { LoadImageOptions } from "../types/index.js";
 import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
