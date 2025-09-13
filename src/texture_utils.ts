@@ -99,7 +99,7 @@ export async function generate_textures_from_spritesheet_tp(
   }
 
   const json_data = json_response.data;
-  const png_file_path = json_data.meta.image;
+  const png_file_path = json_data["meta"]["image"];
   const src_img_data = await env.load_image(png_file_path);
   if (!src_img_data) {
     return result;
@@ -114,16 +114,16 @@ export async function generate_textures_from_spritesheet_tp(
   const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
   const smooth_texture = scale_mode === SCALE_MODE.Linear;
 
-  for (let frame_name in json_data.frames) {
-    const data = json_data.frames[frame_name].frame;
-    canvas.width = Math.round(data.w * scale);
-    canvas.height = Math.round(data.h * scale);
+  for (let frame_name in json_data["frames"]) {
+    const data = json_data["frames"][frame_name]["frame"];
+    canvas.width = Math.round(data["w"] * scale);
+    canvas.height = Math.round(data["h"] * scale);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = smooth_texture;
     ctx.drawImage(
       src_img_data,
-      data.x, data.y, data.w, data.h, // source
+      data["x"], data["y"], data["w"], data["h"], // source
       0, 0, canvas.width, canvas.height // destination
     );
 
