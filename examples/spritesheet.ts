@@ -14,6 +14,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   const ticker = new BrowserTicker();
   ticker.on_tick((delta) => {
+    kl.clear_background("#000");
 
     kl.draw_texture({
       texture: "hero-ship",
