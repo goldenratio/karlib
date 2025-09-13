@@ -72,7 +72,7 @@ export interface DrawCircleOptions {
 }
 
 export interface DrawTextureOptions {
-  readonly texture: Texture;
+  readonly texture: Texture | string;
   readonly x?: number;
   readonly y?: number;
   readonly width?: number;
@@ -88,7 +88,7 @@ export interface DrawTextureOptions {
 }
 
 export interface DrawTextureTileOptions {
-  readonly texture: Texture;
+  readonly texture: Texture | string;
   readonly x?: number;
   readonly y?: number;
   readonly width: number;

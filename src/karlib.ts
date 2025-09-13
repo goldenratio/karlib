@@ -192,12 +192,16 @@ export class Karlib implements Disposable {
 
   draw_texture(options: DrawTextureOptions): void {
     const {
-      texture,
+      texture: texture_opt,
       x = 0, y = 0, rotate = 0, width, height,
       pivot = { x: 0, y: 0 }, scale = 1, alpha = 1,
       tint_color, tint_alpha = 1,
       source_rect,
     } = options;
+
+    const texture = typeof texture_opt === 'string'
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
 
     const ctx = this.context2d;
 
@@ -247,11 +251,15 @@ export class Karlib implements Disposable {
 
   draw_texture_tile(options: DrawTextureTileOptions): void {
     const {
-      texture,
+      texture: texture_opt,
       x = 0, y = 0, width, height,
       tile_position_x = 0, tile_position_y = 0,
       tile_scale, tile_rotate = 0, tile_alpha = 1,
     } = options;
+
+    const texture = typeof texture_opt === 'string'
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
 
     const ctx = this.context2d;
 
