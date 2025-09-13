@@ -1,0 +1,71 @@
+{
+  "frames": {
+    "particle": {
+      "frame": {
+        "x": 99,
+        "y": 0,
+        "w": 44,
+        "h": 44
+      }
+    },
+    "smoke-particle": {
+      "frame": {
+        "x": 233,
+        "y": 0,
+        "w": 9,
+        "h": 9
+      }
+    },
+    "bullet3": {
+      "frame": {
+        "x": 225,
+        "y": 0,
+        "w": 8,
+        "h": 17
+      }
+    },
+    "Bubbles99": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 99,
+        "h": 99
+      }
+    },
+    "ship-2": {
+      "frame": {
+        "x": 143,
+        "y": 0,
+        "w": 44,
+        "h": 36
+      }
+    },
+    "hero-ship": {
+      "frame": {
+        "x": 187,
+        "y": 0,
+        "w": 38,
+        "h": 34
+      }
+    },
+    "meteor-3": {
+      "frame": {
+        "x": 99,
+        "y": 44,
+        "w": 31,
+        "h": 36
+      }
+    }
+  },
+  "meta": {
+    "app": "sheet",
+    "version": "0.1.0",
+    "image": "spritesheet.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 242,
+      "h": 99
+    },
+    "scale": "1"
+  }
+}

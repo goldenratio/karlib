@@ -1,16 +1,18 @@
 import { unwrap } from "./assert_utils.js";
+import { SCALE_MODE } from "./constants.js";
+import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { degree_to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
-import { TextureUtil } from "./texture_utils.js";
+import { generate_textures_from_spritesheet_tp, get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
 import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
-  Size
-} from "./types.js";
-import { ScaleMode } from "./types.js";
+  Size, ScaleMode,
+  LoadImageOptions
+} from "./types/index.js";
 
-export class Karlib {
+export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
   private readonly canvas_size: Size;
   private readonly texture_util: TextureUtil;
@@ -35,16 +37,41 @@ export class Karlib {
     this.texture_util = new TextureUtil(env);
   }
 
-  async load_texture(image_file_path: string): Promise<Texture | undefined> {
+  private add_texture_cache(texture_name: string, texture: Texture): void {
+    const existing_texture = this.res_textures.get(texture_name);
+    if (existing_texture) {
+      existing_texture.dispose();
+    }
+    this.res_textures.set(texture_name, texture);
+  }
+
+  async load_texture(image_file_path: string, options?: LoadImageOptions): Promise<Texture | undefined> {
     return new Promise(async (resolve) => {
-      const img = await this.env.load_image(image_file_path);
-      const scale_mode = this.pixel_perfect ? ScaleMode.Nearest : ScaleMode.Nearest;
+      const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+      const updated_options = { ... { scale_mode }, ...options };
+      const img = await this.env.load_image(image_file_path, updated_options);
       const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
       if (texture) {
-        this.res_textures.set(image_file_path, texture);
+        const texture_name = get_texture_name_from_file_path(image_file_path);
+        this.add_texture_cache(texture_name, texture);
       }
       resolve(texture);
     });
+  }
+
+  /**
+   * Minimal support for TexturePacker exported spritesheet
+   * Supports only hash format
+   */
+  async load_spritesheet_tp(json_file_path: string, options?: LoadImageOptions): Promise<Map<string, Texture>> {
+    const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+    const updated_options: LoadImageOptions = { ... { scale_mode }, ...options ?? {} };
+
+    const result = await generate_textures_from_spritesheet_tp(json_file_path, updated_options, this.env);
+    result.forEach((texture, texture_name) => {
+      this.add_texture_cache(texture_name, texture);
+    });
+    return result;
   }
 
   clear_background(color: string): void {
@@ -192,12 +219,16 @@ export class Karlib {
 
   draw_texture(options: DrawTextureOptions): void {
     const {
-      texture,
+      texture: texture_opt,
       x = 0, y = 0, rotate = 0, width, height,
       pivot = { x: 0, y: 0 }, scale = 1, alpha = 1,
       tint_color, tint_alpha = 1,
       source_rect,
     } = options;
+
+    const texture = typeof texture_opt === 'string'
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
 
     const ctx = this.context2d;
 
@@ -219,7 +250,7 @@ export class Karlib {
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     ctx.imageSmoothingEnabled = smooth_texture;
 
     if (sx !== 1 || sy !== 1) {
@@ -247,11 +278,15 @@ export class Karlib {
 
   draw_texture_tile(options: DrawTextureTileOptions): void {
     const {
-      texture,
+      texture: texture_opt,
       x = 0, y = 0, width, height,
       tile_position_x = 0, tile_position_y = 0,
       tile_scale, tile_rotate = 0, tile_alpha = 1,
     } = options;
+
+    const texture = typeof texture_opt === 'string'
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
 
     const ctx = this.context2d;
 
@@ -259,7 +294,7 @@ export class Karlib {
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     ctx.imageSmoothingEnabled = smooth_texture;
 
     const pattern = this.texture_util.get_canvas_pattern(texture);

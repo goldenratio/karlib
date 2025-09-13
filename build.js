@@ -27,7 +27,7 @@ async function get_gzip_size(filePath) {
 }
 
 async function main() {
-  const startTime = Date.now();
+  const start_time = Date.now();
 
   const src_path = path.join("src", "index.ts");
   const dest_path = path.join("target", "karlib.js");
@@ -42,10 +42,13 @@ async function main() {
     bundle: true,
     minify: false,
     sourcemap: true,
-    drop: ["console", "debugger"]
+    drop: ["console", "debugger"],
+    define: {
+      "process.env.PROD": "true",
+    }
   });
 
-  console.log(`Build finished in ${Date.now() - startTime}ms`);
+  console.log(`Build finished in ${Date.now() - start_time}ms`);
   const gzip_size = await get_gzip_size(dest_path);
   console.log(`${bytes_to_kilobytes(gzip_size)} kb (gzip)`);
 }

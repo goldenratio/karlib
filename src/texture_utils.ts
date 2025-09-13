@@ -1,7 +1,8 @@
 import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
-import { EnvProvider } from "./env_provider/env_provider.js";
-import { ScaleMode } from "./types.js";
+import type { EnvProvider } from "./env_provider/env_provider.js";
+import { SCALE_MODE } from "./constants.js";
+import type { LoadImageOptions, SpriteSheetData } from "./types/index.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();
@@ -42,9 +43,10 @@ export class TextureUtil {
     // Composite the texture.
     this.ctx.globalCompositeOperation = "destination-atop";
     this.ctx.globalAlpha = 1;
-    if (scale_mode === ScaleMode.Nearest) {
-      this.ctx.imageSmoothingEnabled = false;
-    }
+
+    const smooth_texture = scale_mode === SCALE_MODE.Linear;
+    this.ctx.imageSmoothingEnabled = smooth_texture;
+
     this.ctx.drawImage(texture_src, 0, 0);
 
     const image = this.env.create_image_from_canvas(this.buffer);
@@ -76,4 +78,59 @@ export class TextureUtil {
     this.cache.clear();
     this.canvas_pattern_cache.clear();
   }
+}
+
+export function get_texture_name_from_file_path(file_path: string): string {
+  const file_name = file_path.substring(file_path.lastIndexOf("/") + 1);
+  const clean_file_name = file_name.split(/[?#]/)[0];
+  const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
+  return name_without_ext;
+}
+
+export async function generate_textures_from_spritesheet_tp(
+  json_file: string,
+  options: LoadImageOptions,
+  env: EnvProvider
+): Promise<Map<string, Texture>> {
+  const result: Map<string, Texture> = new Map();
+  const json_response = await env.load_json<SpriteSheetData>(json_file);
+  if (!json_response.success) {
+    return result;
+  }
+
+  const json_data = json_response.data;
+  const png_file_path = json_data.meta.image;
+  const src_img_data = await env.load_image(png_file_path);
+  if (!src_img_data) {
+    return result;
+  }
+
+  const canvas = env.create_canvas(100, 100);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return result;
+  }
+
+  const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
+  const smooth_texture = scale_mode === SCALE_MODE.Linear;
+
+  for (let frame_name in json_data.frames) {
+    const data = json_data.frames[frame_name].frame;
+    canvas.width = Math.round(data.w * scale);
+    canvas.height = Math.round(data.h * scale);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = smooth_texture;
+    ctx.drawImage(
+      src_img_data,
+      data.x, data.y, data.w, data.h, // source
+      0, 0, canvas.width, canvas.height // destination
+    );
+
+    const cropped_image = env.create_image_from_canvas(canvas);
+    const texture = new Texture(cropped_image, canvas.width, canvas.height, scale_mode);
+    result.set(frame_name, texture);
+  }
+  src_img_data.close();
+  return result;
 }

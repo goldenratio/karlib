@@ -1,6 +1,6 @@
-import { BrowserTicker, type Karlib } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src";
 
-export async function main(kl: Karlib, canvas: HTMLCanvasElement): Promise<void> {
+export async function main(canvas: HTMLCanvasElement): Promise<void> {
   const right = canvas.width;
   const bottom = canvas.height;
   const top = 0;
@@ -12,6 +12,11 @@ export async function main(kl: Karlib, canvas: HTMLCanvasElement): Promise<void>
   let y = canvas.height / 2 - 50;
   let vx = Math.random() * 10 - 5;
   let vy = Math.random() * 10 - 5;
+
+  const kl = new Karlib({
+    canvas: canvas,
+    env: new BrowserEnv(),
+  });
 
   const ticker = new BrowserTicker();
 

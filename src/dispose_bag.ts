@@ -1,4 +1,4 @@
-import type { EventEmitterLike, EventEmitterOnOffLike } from "./types.js";
+import type { EventEmitterLike, EventEmitterOnOffLike } from "./types/index.js";
 
 export interface Disposable {
   dispose(): void;

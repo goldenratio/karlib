@@ -1,5 +1,6 @@
-import type { EnvProvider } from "./env_provider/env_provider.js";
-import type { Texture } from "./texture.js";
+import type { SCALE_MODE } from "../constants.js";
+import type { EnvProvider } from "../env_provider/env_provider.js";
+import type { Texture } from "../texture.js";
 
 export type FixedLenArray<T, L extends number> = T[] & { length: L };
 
@@ -72,7 +73,7 @@ export interface DrawCircleOptions {
 }
 
 export interface DrawTextureOptions {
-  readonly texture: Texture;
+  readonly texture: Texture | string;
   readonly x?: number;
   readonly y?: number;
   readonly width?: number;
@@ -88,7 +89,7 @@ export interface DrawTextureOptions {
 }
 
 export interface DrawTextureTileOptions {
-  readonly texture: Texture;
+  readonly texture: Texture | string;
   readonly x?: number;
   readonly y?: number;
   readonly width: number;
@@ -117,13 +118,13 @@ export interface EventEmitterOnOffLike {
   off(event: string | symbol, listener?: Function): this;
 }
 
-export const enum ScaleMode {
-  /**
-   * Smooth scale
-   */
-  Linear = 0,
-  /**
-   * Pixelating scaling
-   */
-  Nearest
+export interface LoadImageOptions {
+  readonly scale?: number;
+  readonly scale_mode?: ScaleMode;
 }
+
+export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
+
+export type FetchReponse<TData> =
+  | { readonly success: true, readonly data: TData }
+  | { readonly success: false, readonly error: Error };

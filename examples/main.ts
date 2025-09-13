@@ -1,5 +1,3 @@
-import { BrowserEnv, Karlib } from "../src";
-
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
@@ -7,6 +5,10 @@ async function main(): Promise<void> {
   const example_module_name = process.env.EXAMPLE_MODULE_NAME;
   if (typeof example_module_name !== "string") {
     throw new Error("Unable to load example module!");
+  }
+
+  if (example_module_name === "main") {
+    throw new Error("Very smart, main is not an example!");
   }
 
   const { main: example_main } = await import(`./${example_module_name}.ts`);
@@ -38,12 +40,7 @@ async function main(): Promise<void> {
 
   document.body.appendChild(canvas);
 
-  const kl = new Karlib({
-    canvas,
-    env: new BrowserEnv(),
-  });
-
-  await example_main(kl, canvas);
+  await example_main(canvas);
 }
 
 main();

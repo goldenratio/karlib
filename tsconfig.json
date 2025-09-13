@@ -9,6 +9,8 @@
     "outDir": "js",
     "declarationDir": "target/types",
     "declaration": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
   },
   "include": [
     "./src"
