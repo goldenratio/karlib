@@ -1,0 +1,10 @@
+export const SCALE_MODE = {
+  /**
+   * Smooth scale
+   */
+  Linear: "linear",
+  /**
+   * Pixelating scaling
+   */
+  Nearest: "nearest",
+} as const;

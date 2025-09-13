@@ -1,4 +1,5 @@
-import type { EnvProvider } from "./env_provider.js";
+import { SCALE_MODE } from "../constants.js";
+import type { EnvProvider, LoadImageOptions } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
   constructor() {
@@ -13,13 +14,34 @@ export class BrowserEnv implements EnvProvider {
     return canvas.transferToImageBitmap();
   }
 
-  load_image(url: string): Promise<ImageBitmap | undefined> {
+  load_image(url: string, options?: LoadImageOptions): Promise<ImageBitmap | undefined> {
+    const { scale = 1, scale_mode = SCALE_MODE.Linear } = options || {};
     return new Promise(async (resolve) => {
       try {
         const blob = await fetch(url).then(r => r.blob());
         const bitmap = await createImageBitmap(blob);
-        resolve(bitmap);
+        if (scale === 1) {
+          resolve(bitmap);
+          return;
+        }
+
+        const width = Math.round(bitmap.width * scale);
+        const height = Math.round(bitmap.height * scale);
+
+        const canvas = this.create_canvas(width, height);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return bitmap;
+        }
+        const smooth_texture = scale_mode === SCALE_MODE.Linear;
+        ctx.imageSmoothingEnabled = smooth_texture;
+
+        ctx.drawImage(bitmap, 0, 0, width, height);
+        const scaledBitmap = await createImageBitmap(canvas);
+        console.log(scaledBitmap);
+        resolve(scaledBitmap);
       } catch (err) {
+        console.log(err);
         resolve(undefined);
       }
     });

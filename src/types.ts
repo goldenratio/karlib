@@ -1,3 +1,4 @@
+import type { SCALE_MODE } from "./constants.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import type { Texture } from "./texture.js";
 
@@ -117,12 +118,9 @@ export interface EventEmitterOnOffLike {
   off(event: string | symbol, listener?: Function): this;
 }
 
-export type ScaleMode =
-  /**
-   * Smooth scale
-   */
-  | "linear"
-  /**
-   * Pixelating scaling
-   */
-  | "nearest";
+export interface LoadImageOptions {
+  readonly scale: number;
+  readonly scale_mode: ScaleMode;
+}
+
+export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];

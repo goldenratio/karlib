@@ -77,3 +77,11 @@ export class TextureUtil {
     this.canvas_pattern_cache.clear();
   }
 }
+
+export function get_texture_name_from_file_path(file_path: string): string {
+  const file_name = file_path.substring(file_path.lastIndexOf("/") + 1);
+  const clean_file_name = file_name.split(/[?#]/)[0];
+  const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
+
+  return name_without_ext;
+}

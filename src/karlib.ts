@@ -1,13 +1,15 @@
 import { unwrap } from "./assert_utils.js";
+import { SCALE_MODE } from "./constants.js";
 import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { degree_to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
-import { TextureUtil } from "./texture_utils.js";
+import { get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
 import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
-  Size, ScaleMode
+  Size, ScaleMode,
+  LoadImageOptions
 } from "./types.js";
 
 export class Karlib implements Disposable {
@@ -35,13 +37,18 @@ export class Karlib implements Disposable {
     this.texture_util = new TextureUtil(env);
   }
 
-  async load_texture(image_file_path: string): Promise<Texture | undefined> {
+  async load_texture(image_file_path: string, options?: LoadImageOptions): Promise<Texture | undefined> {
     return new Promise(async (resolve) => {
-      const img = await this.env.load_image(image_file_path);
-      const scale_mode: ScaleMode = this.pixel_perfect ? "nearest" : "linear";
+      const img = await this.env.load_image(image_file_path, options);
+      const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
       const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
       if (texture) {
-        this.res_textures.set(image_file_path, texture);
+        const texture_name = get_texture_name_from_file_path(image_file_path);
+        const existing_texture = this.res_textures.get(texture_name);
+        if (existing_texture) {
+          existing_texture.dispose();
+        }
+        this.res_textures.set(texture_name, texture);
       }
       resolve(texture);
     });
@@ -223,7 +230,7 @@ export class Karlib implements Disposable {
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === "linear";
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     ctx.imageSmoothingEnabled = smooth_texture;
 
     if (sx !== 1 || sy !== 1) {
@@ -267,7 +274,7 @@ export class Karlib implements Disposable {
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === "linear";
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     ctx.imageSmoothingEnabled = smooth_texture;
 
     const pattern = this.texture_util.get_canvas_pattern(texture);
