@@ -1,7 +1,6 @@
 import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
-import { ScaleMode } from "./types.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();
@@ -42,9 +41,10 @@ export class TextureUtil {
     // Composite the texture.
     this.ctx.globalCompositeOperation = "destination-atop";
     this.ctx.globalAlpha = 1;
-    if (scale_mode === ScaleMode.Nearest) {
-      this.ctx.imageSmoothingEnabled = false;
-    }
+
+    const smooth_texture = scale_mode === "linear";
+    this.ctx.imageSmoothingEnabled = smooth_texture;
+
     this.ctx.drawImage(texture_src, 0, 0);
 
     const image = this.env.create_image_from_canvas(this.buffer);

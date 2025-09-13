@@ -1,4 +1,4 @@
-import { ScaleMode } from "./types.js";
+import type { ScaleMode } from "./types.js";
 
 let id = 0;
 
@@ -8,9 +8,9 @@ export class Texture {
   private readonly height: number;
   private readonly id: string;
 
-  private scale_mode: ScaleMode = ScaleMode.Nearest;
+  private scale_mode: ScaleMode = "linear";
 
-  constructor(src: ImageBitmap, width: number, height: number, scale_mode: ScaleMode = ScaleMode.Nearest) {
+  constructor(src: ImageBitmap, width: number, height: number, scale_mode: ScaleMode = "linear") {
     this.src = src;
     this.width = width;
     this.height = height;

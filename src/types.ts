@@ -117,13 +117,12 @@ export interface EventEmitterOnOffLike {
   off(event: string | symbol, listener?: Function): this;
 }
 
-export const enum ScaleMode {
+export type ScaleMode =
   /**
    * Smooth scale
    */
-  Linear = 0,
+  | "linear"
   /**
    * Pixelating scaling
    */
-  Nearest
-}
+  | "nearest";

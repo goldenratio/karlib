@@ -7,9 +7,8 @@ import { TextureUtil } from "./texture_utils.js";
 import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
-  Size
+  Size, ScaleMode
 } from "./types.js";
-import { ScaleMode } from "./types.js";
 
 export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -39,7 +38,7 @@ export class Karlib implements Disposable {
   async load_texture(image_file_path: string): Promise<Texture | undefined> {
     return new Promise(async (resolve) => {
       const img = await this.env.load_image(image_file_path);
-      const scale_mode = this.pixel_perfect ? ScaleMode.Nearest : ScaleMode.Nearest;
+      const scale_mode: ScaleMode = this.pixel_perfect ? "nearest" : "linear";
       const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
       if (texture) {
         this.res_textures.set(image_file_path, texture);
@@ -220,7 +219,7 @@ export class Karlib implements Disposable {
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    const smooth_texture = texture.get_scale_mode() === "linear";
     ctx.imageSmoothingEnabled = smooth_texture;
 
     if (sx !== 1 || sy !== 1) {
@@ -260,7 +259,7 @@ export class Karlib implements Disposable {
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
 
-    const smooth_texture = texture.get_scale_mode() === ScaleMode.Linear;
+    const smooth_texture = texture.get_scale_mode() === "linear";
     ctx.imageSmoothingEnabled = smooth_texture;
 
     const pattern = this.texture_util.get_canvas_pattern(texture);
