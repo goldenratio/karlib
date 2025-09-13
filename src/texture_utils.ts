@@ -1,9 +1,8 @@
 import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
-import { SpriteSheetData } from "./spritesheet_tp_types.js";
-import type { LoadImageOptions } from "./types.js";
 import { SCALE_MODE } from "./constants.js";
+import type { LoadImageOptions, SpriteSheetData } from "./types/index.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();

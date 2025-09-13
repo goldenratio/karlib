@@ -10,7 +10,7 @@ import type {
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
   Size, ScaleMode,
   LoadImageOptions
-} from "./types.js";
+} from "./types/index.js";
 
 export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -60,7 +60,8 @@ export class Karlib implements Disposable {
   }
 
   /**
-   * Minimal support for texture packer exported spritesheet
+   * Minimal support for TexturePacker exported spritesheet
+   * Supports only hash format
    */
   async load_spritesheet_tp(json_file_path: string, options?: LoadImageOptions): Promise<Map<string, Texture>> {
     const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;

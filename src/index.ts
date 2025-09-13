@@ -4,7 +4,7 @@ export * from "./math_utils.js";
 export * from "./assert_utils.js";
 export * from "./texture.js";
 export * from "./dispose_bag.js";
-export * from "./types.js";
+export * from "./types/index.js";
 export * from "./env_provider/env_provider.js";
 export * from "./env_provider/browser_env.js";
 export * from "./env_provider/browser_ticker.js";

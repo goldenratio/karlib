@@ -1,6 +1,6 @@
-import type { SCALE_MODE } from "./constants.js";
-import type { EnvProvider } from "./env_provider/env_provider.js";
-import type { Texture } from "./texture.js";
+import type { SCALE_MODE } from "../constants.js";
+import type { EnvProvider } from "../env_provider/env_provider.js";
+import type { Texture } from "../texture.js";
 
 export type FixedLenArray<T, L extends number> = T[] & { length: L };
 
