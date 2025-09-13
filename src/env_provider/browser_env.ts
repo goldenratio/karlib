@@ -1,5 +1,6 @@
 import { SCALE_MODE } from "../constants.js";
-import type { EnvProvider, LoadImageOptions } from "./env_provider.js";
+import type { LoadImageOptions } from "../types.js";
+import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
   constructor() {
@@ -38,7 +39,6 @@ export class BrowserEnv implements EnvProvider {
 
         ctx.drawImage(bitmap, 0, 0, width, height);
         const scaledBitmap = await createImageBitmap(canvas);
-        console.log(scaledBitmap);
         resolve(scaledBitmap);
       } catch (err) {
         console.log(err);
