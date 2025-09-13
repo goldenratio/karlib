@@ -1,6 +1,6 @@
 import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
-import { EnvProvider } from "./env_provider/env_provider.js";
+import type { EnvProvider } from "./env_provider/env_provider.js";
 import { ScaleMode } from "./types.js";
 
 export class TextureUtil {
