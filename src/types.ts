@@ -119,8 +119,8 @@ export interface EventEmitterOnOffLike {
 }
 
 export interface LoadImageOptions {
-  readonly scale: number;
-  readonly scale_mode: ScaleMode;
+  readonly scale?: number;
+  readonly scale_mode?: ScaleMode;
 }
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];

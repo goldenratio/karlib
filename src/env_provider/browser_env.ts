@@ -37,8 +37,10 @@ export class BrowserEnv implements EnvProvider {
         }
         const smooth_texture = scale_mode === SCALE_MODE.Linear;
         ctx.imageSmoothingEnabled = smooth_texture;
-
         ctx.drawImage(bitmap, 0, 0, width, height);
+
+        // cannot use createImageBitmap's resize option,
+        // because it pixelates pixel art graphics when resized
         const scaledBitmap = await createImageBitmap(canvas);
         bitmap.close();
 
