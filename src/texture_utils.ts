@@ -114,6 +114,8 @@ export async function generate_textures_from_spritesheet_tp(
   const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
   const smooth_texture = scale_mode === SCALE_MODE.Linear;
 
+  // NOTE: use bracket notation when accessing from `json_data`,
+  // it ensures minifiers doesn't mangle it
   for (let frame_name in json_data["frames"]) {
     const data = json_data["frames"][frame_name]["frame"];
     canvas.width = Math.round(data["w"] * scale);
