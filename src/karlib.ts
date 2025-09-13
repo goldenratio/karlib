@@ -1,4 +1,5 @@
 import { unwrap } from "./assert_utils.js";
+import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { degree_to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
@@ -10,7 +11,7 @@ import type {
 } from "./types.js";
 import { ScaleMode } from "./types.js";
 
-export class Karlib {
+export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
   private readonly canvas_size: Size;
   private readonly texture_util: TextureUtil;
