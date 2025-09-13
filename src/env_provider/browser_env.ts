@@ -32,13 +32,16 @@ export class BrowserEnv implements EnvProvider {
         const canvas = this.create_canvas(width, height);
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          return bitmap;
+          resolve(bitmap);
+          return;
         }
         const smooth_texture = scale_mode === SCALE_MODE.Linear;
         ctx.imageSmoothingEnabled = smooth_texture;
 
         ctx.drawImage(bitmap, 0, 0, width, height);
         const scaledBitmap = await createImageBitmap(canvas);
+        bitmap.close();
+
         resolve(scaledBitmap);
       } catch (err) {
         console.log(err);
