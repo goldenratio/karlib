@@ -42,7 +42,10 @@ async function main() {
     bundle: true,
     minify: false,
     sourcemap: true,
-    drop: ["console", "debugger"]
+    drop: ["console", "debugger"],
+    define: {
+      "process.env.PROD": "true",
+    }
   });
 
   console.log(`Build finished in ${Date.now() - startTime}ms`);
