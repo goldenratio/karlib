@@ -131,6 +131,7 @@ export async function generate_textures_from_spritesheet_tp(
     const texture = new Texture(cropped_image, canvas.width, canvas.height, scale_mode);
     result.set(frame_name, texture);
   }
-  src_img_data.close();
+  // in skia-canvas close function doesn't exist
+  src_img_data.close?.();
   return result;
 }
