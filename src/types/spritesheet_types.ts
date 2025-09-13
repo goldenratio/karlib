@@ -15,12 +15,7 @@ interface Frame {
 }
 
 interface Meta {
-  readonly app: string;
-  readonly version: string;
   readonly image: string;
-  readonly format: string;
-  readonly size: Size;
-  readonly scale: string;
 }
 
 interface Size {
