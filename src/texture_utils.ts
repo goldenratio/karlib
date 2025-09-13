@@ -1,6 +1,9 @@
 import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
+import { SpriteSheetData } from "./spritesheet_tp_types.js";
+import type { LoadImageOptions } from "./types.js";
+import { SCALE_MODE } from "./constants.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();
@@ -82,6 +85,52 @@ export function get_texture_name_from_file_path(file_path: string): string {
   const file_name = file_path.substring(file_path.lastIndexOf("/") + 1);
   const clean_file_name = file_name.split(/[?#]/)[0];
   const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
-
   return name_without_ext;
+}
+
+export async function generate_textures_from_spritesheet_tp(
+  json_file: string,
+  options: LoadImageOptions,
+  env: EnvProvider
+): Promise<Map<string, Texture>> {
+  const result: Map<string, Texture> = new Map();
+  const json_data = await env.load_json<SpriteSheetData>(json_file);
+  if (!json_data) {
+    return result;
+  }
+
+  const png_file_path = json_data.meta.image;
+  const src_img_data = await env.load_image(png_file_path);
+  if (!src_img_data) {
+    return result;
+  }
+
+  const canvas = env.create_canvas(100, 100);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    return result;
+  }
+
+  const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
+  const smooth_texture = scale_mode === SCALE_MODE.Linear;
+
+  for (let frame_name in json_data.frames) {
+    const data = json_data.frames[frame_name].frame;
+    canvas.width = Math.round(data.w * scale);
+    canvas.height = Math.round(data.h * scale);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = smooth_texture;
+    ctx.drawImage(
+      src_img_data,
+      data.x, data.y, data.w, data.h, // source
+      0, 0, canvas.width, canvas.height // destination
+    );
+
+    const cropped_image = env.create_image_from_canvas(canvas);
+    const texture = new Texture(cropped_image, canvas.width, canvas.height, scale_mode);
+    result.set(frame_name, texture);
+  }
+  src_img_data.close();
+  return result;
 }

@@ -4,7 +4,7 @@ import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { degree_to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
-import { get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
+import { generate_textures_from_spritesheet_tp, get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
 import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
@@ -37,21 +37,40 @@ export class Karlib implements Disposable {
     this.texture_util = new TextureUtil(env);
   }
 
+  private add_texture_cache(texture_name: string, texture: Texture): void {
+    const existing_texture = this.res_textures.get(texture_name);
+    if (existing_texture) {
+      existing_texture.dispose();
+    }
+    this.res_textures.set(texture_name, texture);
+  }
+
   async load_texture(image_file_path: string, options?: LoadImageOptions): Promise<Texture | undefined> {
     return new Promise(async (resolve) => {
-      const img = await this.env.load_image(image_file_path, options);
       const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+      const updated_options = { ... { scale_mode }, ...options };
+      const img = await this.env.load_image(image_file_path, updated_options);
       const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
       if (texture) {
         const texture_name = get_texture_name_from_file_path(image_file_path);
-        const existing_texture = this.res_textures.get(texture_name);
-        if (existing_texture) {
-          existing_texture.dispose();
-        }
-        this.res_textures.set(texture_name, texture);
+        this.add_texture_cache(texture_name, texture);
       }
       resolve(texture);
     });
+  }
+
+  /**
+   * Minimal support for texture packer exported spritesheet
+   */
+  async load_spritesheet_tp(json_file_path: string, options?: LoadImageOptions): Promise<Map<string, Texture>> {
+    const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+    const updated_options: LoadImageOptions = { ... { scale_mode }, ...options ?? {} };
+
+    const result = await generate_textures_from_spritesheet_tp(json_file_path, updated_options, this.env);
+    result.forEach((texture, texture_name) => {
+      this.add_texture_cache(texture_name, texture);
+    });
+    return result;
   }
 
   clear_background(color: string): void {

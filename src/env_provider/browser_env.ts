@@ -12,7 +12,7 @@ export class BrowserEnv implements EnvProvider {
   }
 
   load_image(url: string, options?: LoadImageOptions): Promise<ImageBitmap | undefined> {
-    const { scale = 1, scale_mode = SCALE_MODE.Linear } = options || {};
+    const { scale = 1, scale_mode = SCALE_MODE.Linear } = options ?? {};
     return new Promise(async (resolve) => {
       try {
         const blob = await fetch(url).then(r => r.blob());
@@ -45,6 +45,20 @@ export class BrowserEnv implements EnvProvider {
         console.log(err);
         resolve(undefined);
       }
+    });
+  }
+
+  load_json<TResponse>(url: string): Promise<TResponse | undefined> {
+    return new Promise<TResponse>((resolve) => {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("err");
+          }
+          return response.json();
+        })
+        .then(data => resolve(data))
+        .catch(_error => resolve(undefined));
     });
   }
 
