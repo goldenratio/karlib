@@ -26,35 +26,43 @@ Check [examples](./examples) folder for list of examples to run.
 ## Basic Example
 
 ```html
-<script type="module">
-  import { BrowserEnv, Karlib, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.js";
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Example</title>
+</head>
+<body>
+  <div><canvas id="my_game" width="800" height="600"></canvas></div>
 
-  async function main() {
-    const canvas = document.createElement("canvas");
-    canvas.width = 800;
-    canvas.height = 600;
-    document.body.appendChild(canvas);
+  <script type="module">
+    import { Karlib, BrowserEnv, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.js";
 
-    const kl = new Karlib({
-      canvas: canvas,
-      env: new BrowserEnv(),
-    });
+    async function main() {
+      const canvas = document.getElementById("my_game");
 
-    const ticker = new BrowserTicker();
-    ticker.on_tick((delta) => {
-      kl.clear_background("#000");
-      kl.draw_rectangle({
-        x: 100,
-        y: 100,
-        width: 100,
-        height: 100,
-        fill_style: "#ff0000",
+      const kl = new Karlib({
+        canvas: canvas,
+        env: new BrowserEnv(),
       });
-    });
-  }
 
-  main();
-</script>
+      const ticker = new BrowserTicker();
+      ticker.on_tick((delta) => {
+        kl.clear_background("#000");
+        kl.draw_rectangle({
+          x: 100,
+          y: 100,
+          width: 100,
+          height: 100,
+          fill_style: "#ff0000",
+        });
+      });
+    }
+
+    main();
+  </script>
+
+</body>
+</html>
 ```
 
 ## Release

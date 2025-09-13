@@ -3,16 +3,16 @@
 ### APIs & patterns to avoid (they trigger CPU work / readback)
 
 - `getContext('2d', { willReadFrequently: true })`<br>
-This hint tells Chrome you’ll read pixels a lot → it usually creates a software canvas.
+This hint tells Chrome you’ll read pixels a lot -> it usually creates a software canvas.
 
 - `getImageData(...)`<br>
-Reads pixels back to CPU memory → stalls / breaks the GPU path. (Common pitfall for hit-testing or color picking.)
+Reads pixels back to CPU memory -> stalls / breaks the GPU path. (Common pitfall for hit-testing or color picking.)
 
 - `putImageData(...)` (especially large regions or every frame)<br>
-Writes raw pixels from CPU → pricey uploads; tends to negate GPU benefits.
+Writes raw pixels from CPU -> pricey uploads; tends to negate GPU benefits.
 
 - `canvas.toDataURL(...)` / `canvas.toBlob(...)` (inside the render loop)<br>
-Requires reading pixels back → CPU sync point. If you must snapshot, do it infrequently and off the hot path.
+Requires reading pixels back -> CPU sync point. If you must snapshot, do it infrequently and off the hot path.
 
 - Heavy `ctx.filter = '...'` usage (e.g., large blur(), complex chains)<br>
 Many filter configurations still fall back or get slow; even when accelerated they can be bandwidth-bound.
@@ -30,7 +30,7 @@ Keep assets sized to what you draw; avoid unnecessary scaling of very large sour
 Not a readback, but it serializes work; cache metrics and glyph positions.
 
 - Ultra-large canvases (tens of megapixels)<br>
-Force tiling / huge textures → can degrade to software on some GPUs. Keep dimensions reasonable and scale with CSS if needed.
+Force tiling / huge textures -> can degrade to software on some GPUs. Keep dimensions reasonable and scale with CSS if needed.
 
 ### Safer alternatives & tips to stay on the GPU path
 
