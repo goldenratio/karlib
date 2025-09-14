@@ -9,7 +9,8 @@ import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
   Size, ScaleMode,
-  LoadImageOptions
+  LoadImageOptions,
+  SpriteSheetData
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -63,7 +64,7 @@ export class Karlib implements Disposable {
    * Minimal support for TexturePacker exported spritesheet
    * Supports only hash format
    */
-  async load_spritesheet_tp(json_file_path: string, options?: LoadImageOptions): Promise<Map<string, Texture>> {
+  async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: LoadImageOptions): Promise<Map<string, Texture>> {
     const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
     const updated_options: LoadImageOptions = { ... { scale_mode }, ...options ?? {} };
 
