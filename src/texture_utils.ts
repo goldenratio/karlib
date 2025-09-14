@@ -88,17 +88,23 @@ export function get_texture_name_from_file_path(file_path: string): string {
 }
 
 export async function generate_textures_from_spritesheet_tp(
-  json_file: string,
+  json_file: string | SpriteSheetData,
   options: LoadImageOptions,
   env: EnvProvider
 ): Promise<Map<string, Texture>> {
   const result: Map<string, Texture> = new Map();
-  const json_response = await env.load_json<SpriteSheetData>(json_file);
-  if (!json_response.success) {
+  let json_data: SpriteSheetData | undefined = undefined;
+
+  if (typeof json_file === "string") {
+    json_data = await env.load_json<SpriteSheetData>(json_file);
+  } else {
+    json_data = json_file;
+  }
+
+  if (!json_data) {
     return result;
   }
 
-  const json_data = json_response.data;
   const png_file_path = json_data["meta"]["image"];
   const src_img_data = await env.load_image(png_file_path);
   if (!src_img_data) {
@@ -114,7 +120,7 @@ export async function generate_textures_from_spritesheet_tp(
   const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
   const smooth_texture = scale_mode === SCALE_MODE.Linear;
 
-  // NOTE: use bracket notation when accessing from `json_data`,
+  // NOTE: use bracket notation, instead of dot when accessing from `json_data`,
   // it ensures minifiers doesn't mangle it
   for (let frame_name in json_data["frames"]) {
     const data = json_data["frames"][frame_name]["frame"];
