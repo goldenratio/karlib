@@ -92,6 +92,12 @@ Check [examples](./examples) folder for list of examples to run.
 </html>
 ```
 
+## Showcase
+
+Games created using karlib:
+
+- [Cat-aplut](https://labrat.mobi/games/catapult/) (source: https://github.com/goldenratio/cat-apult)
+
 ## Release
 
 ### NPM
