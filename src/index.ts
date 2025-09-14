@@ -1,5 +1,4 @@
 export * from "./constants.js";
-export * from "./color_utils.js";
 export * from "./math_utils.js";
 export * from "./assert_utils.js";
 export * from "./texture.js";

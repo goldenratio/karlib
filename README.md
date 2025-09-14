@@ -96,7 +96,12 @@ Check [examples](./examples) folder for list of examples to run.
 
 Games created using karlib:
 
-- [Cat-aplut](https://labrat.mobi/games/catapult/) (source: https://github.com/goldenratio/cat-apult)
+- [Cat-aplut](https://labrat.mobi/games/catapult/)
+
+## Inspirtations
+
+- [Raylib](https://www.raylib.com/)
+- [Tsoding](https://www.youtube.com/watch?v=maSIQg8IFRI)
 
 ## Release
 

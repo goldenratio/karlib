@@ -10,7 +10,8 @@ import type {
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
   Size, ScaleMode,
   LoadImageOptions,
-  SpriteSheetData
+  SpriteSheetData,
+  Rectangle
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -47,17 +48,15 @@ export class Karlib implements Disposable {
   }
 
   async load_texture(image_file_path: string, options?: LoadImageOptions): Promise<Texture | undefined> {
-    return new Promise(async (resolve) => {
-      const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
-      const updated_options = { ... { scale_mode }, ...options };
-      const img = await this.env.load_image(image_file_path, updated_options);
-      const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
-      if (texture) {
-        const texture_name = get_texture_name_from_file_path(image_file_path);
-        this.add_texture_cache(texture_name, texture);
-      }
-      resolve(texture);
-    });
+    const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+    const updated_options = { scale_mode, ...options };
+    const img = await this.env.load_image(image_file_path, updated_options);
+    const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
+    if (texture) {
+      const texture_name = get_texture_name_from_file_path(image_file_path);
+      this.add_texture_cache(texture_name, texture);
+    }
+    return texture;
   }
 
   /**
@@ -66,7 +65,7 @@ export class Karlib implements Disposable {
    */
   async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: LoadImageOptions): Promise<Map<string, Texture>> {
     const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
-    const updated_options: LoadImageOptions = { ... { scale_mode }, ...options ?? {} };
+    const updated_options: LoadImageOptions = { scale_mode, ...options ?? {} };
 
     const result = await generate_textures_from_spritesheet_tp(json_file_path, updated_options, this.env);
     result.forEach((texture, texture_name) => {
@@ -331,7 +330,19 @@ export class Karlib implements Disposable {
     ctx.fillRect(0, 0, width, height);
 
     ctx.restore();
+  }
 
+  begin_scissor_mode(options: Rectangle): void {
+    const { x, y, width, height } = options;
+    this.context2d.save();
+
+    this.context2d.beginPath();
+    this.context2d.rect(x, y, width, height);
+    this.context2d.clip();
+  }
+
+  end_scissor_mode(): void {
+    this.context2d.restore();
   }
 
   get_context_2d(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
@@ -368,7 +379,5 @@ export class Karlib implements Disposable {
     // Break references for GC
     // @ts-expect-error intentional nulling out
     this.context2d = null;
-    // @ts-expect-error intentional nulling out
-    this.canvas = null;
   }
 }
