@@ -1,5 +1,8 @@
 import { BrowserEnv, BrowserTicker, Karlib } from "../src";
 
+export const CANVAS_WIDTH = 800;
+export const CANVAS_HEIGHT = 600;
+
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
   const { width, height } = canvas;
   const rect_width = 100;

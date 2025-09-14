@@ -1,7 +1,9 @@
 import { BrowserEnv, BrowserTicker, Karlib } from "../src";
 
-// Texture Packer spritesheet example
+export const CANVAS_WIDTH = 800;
+export const CANVAS_HEIGHT = 600;
 
+// Texture Packer spritesheet example
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   const kl = new Karlib({

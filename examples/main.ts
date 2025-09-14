@@ -1,6 +1,3 @@
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 600;
-
 async function main(): Promise<void> {
   const example_module_name = process.env.EXAMPLE_MODULE_NAME;
   if (typeof example_module_name !== "string") {
@@ -11,11 +8,15 @@ async function main(): Promise<void> {
     throw new Error("Very smart, main is not an example!");
   }
 
-  const { main: example_main } = await import(`./${example_module_name}.ts`);
+  const {
+    main: example_main,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
+  } = await import(`./${example_module_name}.ts`);
 
   const canvas = document.createElement("canvas");
-  canvas.width = GAME_WIDTH;
-  canvas.height = GAME_HEIGHT;
+  canvas.width = CANVAS_WIDTH as number;
+  canvas.height = CANVAS_HEIGHT as number;
 
   Object.assign(canvas.style, <CSSStyleDeclaration>{
     // Style for centering
