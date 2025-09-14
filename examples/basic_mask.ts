@@ -38,6 +38,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
       y = y + mask_radius >= height ? height - mask_radius : mask_radius;
     }
 
+    // draw
     kl.clear_background("#000");
 
     kl.begin_scissor_mode({ x: x | 0, y: y | 0, radius: 100 });
@@ -46,7 +47,6 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
       x: 0,
       y: 0,
     });
-
     kl.end_scissor_mode();
   });
 }
