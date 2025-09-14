@@ -11,7 +11,8 @@ import type {
   Size, ScaleMode,
   LoadImageOptions,
   SpriteSheetData,
-  Rectangle
+  Rectangle,
+  Circle
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -303,7 +304,7 @@ export class Karlib implements Disposable {
       return;
     }
 
-    let matrix: DOMMatrix;
+    let matrix: DOMMatrix | undefined = undefined;
 
     if (typeof tile_scale !== "undefined") {
       const sx = typeof tile_scale === "number" ? tile_scale : tile_scale.x;
@@ -332,13 +333,23 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
-  begin_scissor_mode(options: Rectangle): void {
-    const { x, y, width, height } = options;
-    this.context2d.save();
+  begin_scissor_mode(options: Rectangle | Circle): void {
+    const ctx = this.context2d;
+    ctx.save();
 
-    this.context2d.beginPath();
-    this.context2d.rect(x, y, width, height);
-    this.context2d.clip();
+    const { x, y } = options;
+    ctx.beginPath();
+
+    if ("width" in options) {
+      const { width, height } = options;
+      ctx.rect(x, y, width, height);
+    } else {
+      const { radius } = options;
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    }
+
+    ctx.closePath();
+    ctx.clip();
   }
 
   end_scissor_mode(): void {
