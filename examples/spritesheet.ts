@@ -9,6 +9,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   const kl = new Karlib({
     canvas: canvas,
     env: new BrowserEnv(),
+    // set this to `true` for pixel art style games
     pixel_perfect: true,
   });
 
