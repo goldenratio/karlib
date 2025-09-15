@@ -46,6 +46,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
     kl.draw_scissor_mode(
       () => {
+        // draw calls inside this function will be masked
         kl.draw_texture({
           texture: "sample_background",
           x: 0,
