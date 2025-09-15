@@ -11,8 +11,7 @@ import type {
   Size, ScaleMode,
   LoadImageOptions,
   SpriteSheetData,
-  Rectangle,
-  Circle
+  MaskSource
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -31,8 +30,6 @@ export class Karlib implements Disposable {
 
     const ctx = unwrap(canvas.getContext('2d', {
       alpha: false,
-      // setting `desynchronized` to true, doesn't render in linux X11 chromium browsers
-      // desynchronized: true,
       willReadFrequently: false,
     }), "Unable to get 2D rendering context");
 
@@ -75,7 +72,10 @@ export class Karlib implements Disposable {
     return result;
   }
 
-  clear_background(color: string): void {
+  /**
+   * Sets background color
+   */
+  clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
     ctx.fillStyle = color;
@@ -333,27 +333,53 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
-  begin_scissor_mode(options: Rectangle | Circle): void {
+  /**
+   * Executes a drawing function with an clipping mask.
+   * @param draw_fn mask is applied for any drawing done inside this function
+   * @param mask_source when not defined mask is not applied. By setting it to undefined, you can use it to disable/enable mask
+   */
+  draw_scissor_mode(
+    draw_fn: (kl: Karlib) => void,
+    mask_source?: MaskSource,
+  ): void {
+    if (!mask_source) {
+      draw_fn(this);
+      return;
+    }
+
     const ctx = this.context2d;
     ctx.save();
 
-    const { x, y } = options;
-    ctx.beginPath();
+    if ("width" in mask_source) {
+      ctx.beginPath();
+      const { x, y, width, height, radii } = mask_source;
+      if (typeof radii === "undefined") {
+        ctx.rect(x, y, width, height);
+      } else {
+        ctx.roundRect(x, y, width, height, radii);
+      }
+      ctx.closePath();
+      ctx.clip();
+    } else if ("radius" in mask_source) {
+      ctx.beginPath();
+      const { x, y, radius, pivot = { x: 0, y: 0 } } = mask_source;
+      const diameter = radius * 2;
+      const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * diameter : pivot.x;
+      const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * diameter : pivot.y;
 
-    if ("width" in options) {
-      const { width, height } = options;
-      ctx.rect(x, y, width, height);
-    } else {
-      const { radius } = options;
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      const cx = x - pivot_x + radius;
+      const cy = y - pivot_y + radius;
+
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+      ctx.closePath();
+      ctx.clip();
+    } else if ("path" in mask_source) {
+      const { path, fill_rule } = mask_source;
+      ctx.clip(path, fill_rule);
     }
 
-    ctx.closePath();
-    ctx.clip();
-  }
-
-  end_scissor_mode(): void {
-    this.context2d.restore();
+    draw_fn(this);
+    ctx.restore();
   }
 
   get_context_2d(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
