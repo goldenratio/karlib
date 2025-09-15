@@ -333,29 +333,41 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Executes a drawing function with an clipping mask.
+   * @param draw_fn mask is applied for any drawing done inside this function
+   * @param mask_source when not defined mask is not applied
+   */
   draw_scissor_mode(
-    mask_source: MaskSourceType,
     draw_fn: (kl: Karlib) => void,
+    mask_source?: MaskSourceType,
   ): void {
+    if (!mask_source) {
+      draw_fn(this);
+      return;
+    }
+
     const ctx = this.context2d;
     ctx.save();
 
-    const { x, y } = mask_source;
-    ctx.beginPath();
-
     if ("width" in mask_source) {
-      const { width, height } = mask_source;
+      ctx.beginPath();
+      const { x, y, width, height } = mask_source;
       ctx.rect(x, y, width, height);
+      ctx.closePath();
+      ctx.clip();
     } else if ("radius" in mask_source) {
-      const { radius } = mask_source;
+      ctx.beginPath();
+      const { x, y, radius } = mask_source;
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.closePath();
+      ctx.clip();
+    } else if ("path" in mask_source) {
+      const { path, fill_rule } = mask_source;
+      ctx.clip(path, fill_rule);
     }
 
-    ctx.closePath();
-    ctx.clip();
-
     draw_fn(this);
-
     ctx.restore();
   }
 

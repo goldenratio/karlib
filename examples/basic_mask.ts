@@ -19,6 +19,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   });
 
   await kl.load_texture("./sample_background.png");
+  await kl.load_texture("./character_green_front.png");
 
   const ticker = new BrowserTicker();
   ticker.on_tick((delta) => {
@@ -41,16 +42,20 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // draw
     kl.clear_background();
 
+    kl.draw_texture({ texture: "character_green_front", x: 100, y: 200 });
+
     kl.draw_scissor_mode(
-      { x: x, y: y, radius: 100 },
       () => {
         kl.draw_texture({
           texture: "sample_background",
           x: 0,
           y: 0,
         });
-      }
+      },
+      { x: x, y: y, radius: 100 },
     );
+
+    kl.draw_texture({ texture: "character_green_front", x: 500, y: 200 });
 
   });
 }
