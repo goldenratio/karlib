@@ -336,7 +336,7 @@ export class Karlib implements Disposable {
   /**
    * Executes a drawing function with an clipping mask.
    * @param draw_fn mask is applied for any drawing done inside this function
-   * @param mask_source when not defined mask is not applied
+   * @param mask_source when not defined mask is not applied. This can be used to disable/enable mask
    */
   draw_scissor_mode(
     draw_fn: (kl: Karlib) => void,
