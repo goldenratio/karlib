@@ -36,8 +36,8 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // draw
     kl.clear_background("#000");
     kl.draw_rectangle({
-      x: x | 0,
-      y: y | 0,
+      x: x,
+      y: y,
       width: rect_width,
       height: rect_height,
     });

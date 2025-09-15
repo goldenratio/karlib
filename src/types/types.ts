@@ -19,12 +19,6 @@ export interface Rectangle {
   readonly height: number;
 }
 
-export interface Circle {
-  readonly x: number;
-  readonly y: number;
-  readonly radius: number;
-}
-
 export interface Size {
   readonly width: number;
   readonly height: number;
@@ -130,3 +124,8 @@ export interface LoadImageOptions {
 }
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
+
+export type MaskSourceType =
+  | { readonly x: number; readonly y: number; readonly radius: number }
+  | { readonly x: number; readonly y: number; readonly width: number; readonly height: number; };
+// | { readonly path: Path2D };

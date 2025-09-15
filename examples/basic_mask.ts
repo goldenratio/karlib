@@ -1,4 +1,4 @@
-import { BrowserEnv, BrowserTicker, Karlib, unwrap } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src";
 
 export const CANVAS_WIDTH = 918;
 export const CANVAS_HEIGHT = 515;
@@ -18,7 +18,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     pixel_perfect: true,
   });
 
-  const img_texture = unwrap(await kl.load_texture("./sample_background.png"), "err");
+  await kl.load_texture("./sample_background.png");
 
   const ticker = new BrowserTicker();
   ticker.on_tick((delta) => {
@@ -41,12 +41,16 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // draw
     kl.clear_background();
 
-    kl.begin_scissor_mode({ x: x | 0, y: y | 0, radius: 100 });
-    kl.draw_texture({
-      texture: img_texture,
-      x: 0,
-      y: 0,
-    });
-    kl.end_scissor_mode();
+    kl.draw_scissor_mode(
+      { x: x, y: y, radius: 100 },
+      () => {
+        kl.draw_texture({
+          texture: "sample_background",
+          x: 0,
+          y: 0,
+        });
+      }
+    );
+
   });
 }

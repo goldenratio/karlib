@@ -11,8 +11,7 @@ import type {
   Size, ScaleMode,
   LoadImageOptions,
   SpriteSheetData,
-  Rectangle,
-  Circle
+  MaskSourceType
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -31,8 +30,6 @@ export class Karlib implements Disposable {
 
     const ctx = unwrap(canvas.getContext('2d', {
       alpha: false,
-      // setting `desynchronized` to true, doesn't render in linux X11 chromium browsers
-      // desynchronized: true,
       willReadFrequently: false,
     }), "Unable to get 2D rendering context");
 
@@ -75,10 +72,13 @@ export class Karlib implements Disposable {
     return result;
   }
 
-  clear_background(color?: string): void {
+  /**
+   * Sets background color
+   */
+  clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
-    ctx.fillStyle = color ?? "#000";
+    ctx.fillStyle = color;
     ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
     ctx.restore();
   }
@@ -333,27 +333,30 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
-  begin_scissor_mode(options: Rectangle | Circle): void {
+  draw_scissor_mode(
+    mask_source: MaskSourceType,
+    draw_fn: (kl: Karlib) => void,
+  ): void {
     const ctx = this.context2d;
     ctx.save();
 
-    const { x, y } = options;
+    const { x, y } = mask_source;
     ctx.beginPath();
 
-    if ("width" in options) {
-      const { width, height } = options;
+    if ("width" in mask_source) {
+      const { width, height } = mask_source;
       ctx.rect(x, y, width, height);
-    } else {
-      const { radius } = options;
+    } else if ("radius" in mask_source) {
+      const { radius } = mask_source;
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
     }
 
     ctx.closePath();
     ctx.clip();
-  }
 
-  end_scissor_mode(): void {
-    this.context2d.restore();
+    draw_fn(this);
+
+    ctx.restore();
   }
 
   get_context_2d(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
