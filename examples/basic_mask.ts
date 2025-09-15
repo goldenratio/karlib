@@ -39,7 +39,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     }
 
     // draw
-    kl.clear_background("#000");
+    kl.clear_background();
 
     kl.begin_scissor_mode({ x: x | 0, y: y | 0, radius: 100 });
     kl.draw_texture({

@@ -75,10 +75,10 @@ export class Karlib implements Disposable {
     return result;
   }
 
-  clear_background(color: string): void {
+  clear_background(color?: string): void {
     const ctx = this.context2d;
     ctx.save();
-    ctx.fillStyle = color;
+    ctx.fillStyle = color ?? "#000";
     ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
     ctx.restore();
   }
