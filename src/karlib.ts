@@ -11,7 +11,7 @@ import type {
   Size, ScaleMode,
   LoadImageOptions,
   SpriteSheetData,
-  MaskSourceType
+  MaskSource
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -336,11 +336,11 @@ export class Karlib implements Disposable {
   /**
    * Executes a drawing function with an clipping mask.
    * @param draw_fn mask is applied for any drawing done inside this function
-   * @param mask_source when not defined mask is not applied. This can be used to disable/enable mask
+   * @param mask_source when not defined mask is not applied. By setting it to undefined, you can use it to disable/enable mask
    */
   draw_scissor_mode(
     draw_fn: (kl: Karlib) => void,
-    mask_source?: MaskSourceType,
+    mask_source?: MaskSource,
   ): void {
     if (!mask_source) {
       draw_fn(this);

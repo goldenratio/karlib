@@ -125,7 +125,7 @@ export interface LoadImageOptions {
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
 
-export type MaskSourceType =
+export type MaskSource =
   | { readonly x: number; readonly y: number; readonly radius: number; readonly pivot?: Point; }
   | { readonly x: number; readonly y: number; readonly width: number; readonly height: number; readonly radii?: number }
   | { readonly path: Path2D, readonly fill_rule?: CanvasFillRule; };
