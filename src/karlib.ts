@@ -352,14 +352,25 @@ export class Karlib implements Disposable {
 
     if ("width" in mask_source) {
       ctx.beginPath();
-      const { x, y, width, height } = mask_source;
-      ctx.rect(x, y, width, height);
+      const { x, y, width, height, radii } = mask_source;
+      if (typeof radii === "undefined") {
+        ctx.rect(x, y, width, height);
+      } else {
+        ctx.roundRect(x, y, width, height, radii);
+      }
       ctx.closePath();
       ctx.clip();
     } else if ("radius" in mask_source) {
       ctx.beginPath();
-      const { x, y, radius } = mask_source;
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      const { x, y, radius, pivot = { x: 0, y: 0 } } = mask_source;
+      const diameter = radius * 2;
+      const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * diameter : pivot.x;
+      const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * diameter : pivot.y;
+
+      const cx = x - pivot_x + radius;
+      const cy = y - pivot_y + radius;
+
+      ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
       ctx.closePath();
       ctx.clip();
     } else if ("path" in mask_source) {

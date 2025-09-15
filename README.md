@@ -63,13 +63,11 @@ Check [examples](./examples) folder for list of examples to run.
         // Bounce off horizontal walls
         if (x + rect_width >= width || x <= 0) {
           vx *= -1;
-          x = x + rect_width >= width ? width - rect_width : 0;
         }
 
         // Bounce off vertical walls
         if (y + rect_height >= height || y <= 0) {
           vy *= -1;
-          y = y + rect_height >= height ? height - rect_height : 0;
         }
 
         // draw
