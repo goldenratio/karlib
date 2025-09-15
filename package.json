@@ -13,8 +13,8 @@
   },
   "scripts": {
     "clean": "rm -rf target js",
-    "build": "npm run clean && tsc && node ./build.js",
-    "example": "npm run clean && node ./example_server.js",
+    "build": "npm run clean && tsc && node ./build.ts",
+    "example": "npm run clean && node ./example_server.ts",
     "version": "npm run build",
     "postversion": "git push && git push --tags"
   },

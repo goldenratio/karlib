@@ -6,17 +6,17 @@ import { createGzip } from 'node:zlib';
 
 import { build } from "esbuild";
 
-function bytes_to_kilobytes(bytes) {
+function bytes_to_kilobytes(bytes: number): number {
   const value = bytes / 1024;
   return Math.round(value * 100) / 100;
 }
 
-async function get_gzip_size(filePath) {
+async function get_gzip_size(file_path: string): Promise<number> {
   return new Promise((resolve, reject) => {
     let size = 0;
     const gzip = createGzip();
 
-    fs.createReadStream(filePath)
+    fs.createReadStream(file_path)
       .pipe(gzip)
       .on("data", chunk => {
         size += chunk.length;
@@ -26,7 +26,7 @@ async function get_gzip_size(filePath) {
   });
 }
 
-async function main() {
+async function main(): Promise<void> {
   const start_time = Date.now();
 
   const src_path = path.join("src", "index.ts");

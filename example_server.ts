@@ -11,7 +11,7 @@ if (!example_module_name || example_module_name.includes("example_server.js")) {
   process.exit(1);
 }
 
-async function run_command(cmd, options = {}) {
+async function run_command(cmd: string, options = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     const proc = exec(cmd, { ...options });
     proc.stdout?.pipe(process.stdout);
@@ -23,7 +23,7 @@ async function run_command(cmd, options = {}) {
   });
 }
 
-async function main() {
+async function main(): Promise<void> {
   try {
     if (fs.existsSync(dest_dir)) {
       fs.rmSync(dest_dir, { recursive: true, force: true });
