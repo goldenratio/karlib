@@ -98,7 +98,7 @@ Games created using karlib:
 
 - [Cat-aplut](https://labrat.mobi/games/catapult/)
 
-## Inspirtations
+## Inspirations
 
 - [Raylib](https://www.raylib.com/)
 - [Tsoding](https://www.youtube.com/watch?v=maSIQg8IFRI)
