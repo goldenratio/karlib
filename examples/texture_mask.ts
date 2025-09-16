@@ -4,7 +4,7 @@ export const CANVAS_WIDTH = 918;
 export const CANVAS_HEIGHT = 515;
 
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
-  const mask_radius = 100;
+  const mask_radius = 150;
 
   let x = CANVAS_WIDTH / 2 - mask_radius;
   let y = CANVAS_HEIGHT / 2 - mask_radius;
@@ -15,6 +15,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   await kl.load_texture("./sample_background.png");
   await kl.load_texture("./character_green_front.png");
+  await kl.load_texture("./texture_mask_blur.png");
 
   const ticker = new BrowserTicker();
   ticker.on_tick((delta) => {
@@ -37,6 +38,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // draw
     kl.clear_background();
 
+    // this texture won't not visible (expected) - performance reasons
     kl.draw_texture({ texture: "character_green_front", x: 100, y: 200 });
 
     kl.draw_scissor_mode(
@@ -48,7 +50,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
           y: 0,
         });
       },
-      { x: x, y: y, radius: mask_radius },
+      { x: x, y: y, texture: "texture_mask_blur" },
     );
 
     kl.draw_texture({ texture: "character_green_front", x: 500, y: 200 });

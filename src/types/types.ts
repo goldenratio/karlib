@@ -126,6 +126,17 @@ export interface LoadImageOptions {
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
 
 export type MaskSource =
+  // circle
   | { readonly x: number; readonly y: number; readonly radius: number; readonly pivot?: Point; }
-  | { readonly x: number; readonly y: number; readonly width: number; readonly height: number; readonly radii?: number }
-  | { readonly path: Path2D, readonly fill_rule?: CanvasFillRule; };
+  // rect and rounded rect
+  | { readonly x: number; readonly y: number; readonly width: number; readonly height: number; readonly radii?: number; }
+  // path2D
+  | { readonly path: Path2D, readonly fill_rule?: CanvasFillRule; }
+  // texture
+  | {
+    readonly x: number;
+    readonly y: number;
+    readonly texture: Texture | string;
+    readonly pivot?: Point;
+    readonly scale?: number | Point;
+  };
