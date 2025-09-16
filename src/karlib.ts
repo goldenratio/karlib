@@ -386,7 +386,8 @@ export class Karlib implements Disposable {
        * however it's the most performant way.
        * what's the issue?
        * Masking operation affects the entire canvas, not just the content drawn within the `draw_fn`.
-       * So draw calls done before `draw_fn` will be lost
+       * So draw calls done before `draw_fn` will be lost.
+       * I think, it's fine 99% of the usecase.
        */
       draw_fn(this);
       ctx.globalCompositeOperation = "destination-in";
