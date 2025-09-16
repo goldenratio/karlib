@@ -376,6 +376,23 @@ export class Karlib implements Disposable {
     } else if ("path" in mask_source) {
       const { path, fill_rule } = mask_source;
       ctx.clip(path, fill_rule);
+    } else if ("texture" in mask_source) {
+      const { x, y, texture, pivot, scale } = mask_source;
+      const overlay_texture = typeof texture === "string"
+        ? unwrap(this.res_textures.get(texture), `texture! ${texture} does not exist`)
+        : texture;
+      /**
+       * NOTE: we have correctness issue with "destination-in" approach,
+       * however it's the most performant way.
+       * what's the issue?
+       * Masking operation affects the entire canvas, not just the content drawn within the `draw_fn`.
+       * So draw calls done before `draw_fn` will be lost
+       */
+      draw_fn(this);
+      ctx.globalCompositeOperation = "destination-in";
+      this.draw_texture({ texture: overlay_texture, x, y, pivot, scale });
+      ctx.restore();
+      return;
     }
 
     draw_fn(this);
