@@ -25,11 +25,13 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // Bounce off horizontal walls
     if (x + (mask_radius * 2) >= CANVAS_WIDTH || x <= 0) {
       vx *= -1;
+      x = x + (mask_radius * 2) >= CANVAS_WIDTH ? CANVAS_WIDTH - (mask_radius * 2) : 0;
     }
 
     // Bounce off vertical walls
     if (y + (mask_radius * 2) >= CANVAS_HEIGHT || y <= 0) {
       vy *= -1;
+      y = y + (mask_radius * 2) >= CANVAS_HEIGHT ? CANVAS_HEIGHT - (mask_radius * 2) : 0;
     }
 
     // draw
