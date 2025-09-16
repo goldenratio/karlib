@@ -9,8 +9,10 @@
     "outDir": "js",
     "declarationDir": "target/types",
     "declaration": true,
+    // rules
+    "strict": true,
     "verbatimModuleSyntax": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": true
   },
   "include": [
     "./src"

@@ -23,7 +23,7 @@ export class Karlib implements Disposable {
   private readonly pixel_perfect: boolean;
 
   constructor(options: InitOptions) {
-    const { canvas, env, pixel_perfect } = options;
+    const { canvas, env, pixel_perfect = false } = options;
     this.pixel_perfect = pixel_perfect;
     this.env = env;
     this.canvas_size = { width: canvas.width, height: canvas.height };

@@ -12,4 +12,6 @@ export const SCALE_MODE = {
 /**
  * no-operation
  */
-export const NOOP = () => { };
+export const NOOP = (): void => {
+  // empty
+};
