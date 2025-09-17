@@ -2,7 +2,7 @@
 
 ### APIs & patterns to avoid (they trigger CPU work / readback)
 
-NOTE: Try not use to below APIs in a render loop. If you have to use it, then use them in OffscreenCanvas and convert it to `ImageBitmap` and cache it.
+NOTE: Try not to use below APIs in a render loop. If you have to use it, then use them in OffscreenCanvas and convert it to `ImageBitmap` and cache it.
 
 - `getContext('2d', { willReadFrequently: true })`<br>
 This hint tells Chrome you'll read pixels a lot. It usually creates a software canvas.
