@@ -28,7 +28,7 @@ Check [examples](./examples) folder for list of examples to run.
 [Preview](https://codepen.io/kuuuurija/pen/myeZLyK)
 
 ```js
-import { BrowserEnv, Karlib, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.js";
+import { BrowserEnv, Karlib, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.min.js";
 
 async function main() {
   const canvas = document.getElementById("my_game");
