@@ -6,6 +6,10 @@ import { createGzip } from 'node:zlib';
 
 import { build } from "esbuild";
 
+interface BuildOptions {
+  readonly minify?: boolean;
+}
+
 function bytes_to_kilobytes(bytes: number): number {
   const value = bytes / 1024;
   return Math.round(value * 100) / 100;
@@ -27,10 +31,17 @@ async function get_gzip_size(file_path: string): Promise<number> {
 }
 
 async function main(): Promise<void> {
+  await perform_build();
+  await perform_build({ minify: true });
+}
+
+async function perform_build(options?: BuildOptions): Promise<void> {
+  const { minify = false } = options || {};
   const start_time = Date.now();
+  const target_file_name = minify ? "karlib.min.js" : "karlib.js";
 
   const src_path = path.join("src", "index.ts");
-  const dest_path = path.join("target", "karlib.js");
+  const dest_path = path.join("target", target_file_name);
 
   console.log(`Building... ${src_path} -> ${dest_path}`);
   await build({
@@ -40,7 +51,7 @@ async function main(): Promise<void> {
     target: "esnext",
     treeShaking: true,
     bundle: true,
-    minify: false,
+    minify: minify,
     sourcemap: true,
     drop: ["console", "debugger"],
     define: {
