@@ -25,7 +25,7 @@ Check [examples](./examples) folder for list of examples to run.
 
 ## Basic Example
 
-[Preview](https://codepen.io/kuuuurija/pen/myeZLyK)
+[Try this example on CodePen](https://codepen.io/kuuuurija/pen/myeZLyK)
 
 ```js
 import { BrowserEnv, Karlib, BrowserTicker } from "https://unpkg.com/@goldenratio/karlib@latest/target/karlib.min.js";
