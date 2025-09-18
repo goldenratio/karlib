@@ -1,11 +1,29 @@
 import type { Disposable } from "../dispose_bag.js";
+import type { Mutable } from "../types/index.js";
+
+export interface TickerData {
+  /**
+   * milliseconds elapsed from last updated.
+   * Ideally value should be 16.66 ms
+   */
+  readonly elapsed_ms: number;
+  /**
+   * last updated `performance.now()`
+   */
+  readonly last_time: number;
+
+  /**
+   * Ideally value between 0 and 1
+   */
+  readonly delta_time: number;
+}
 
 /**
  * Callback for ticker updates.
  *
  * @param delta_time - Scalar time value from last frame to this frame. This is NOT in milliseconds.
  */
-export type TickerCallbackType = (delta_time: number) => void;
+export type TickerCallbackType = (ticker_data: TickerData) => void;
 
 export class BrowserTicker implements Disposable {
   // Target frames per millisecond
@@ -26,6 +44,11 @@ export class BrowserTicker implements Disposable {
   private elapsed_ms: number = 1;
 
   private raf_id: number = -1;
+  private current_ticker_data: Mutable<TickerData> = {
+    delta_time: 0,
+    last_time: 0,
+    elapsed_ms: 0,
+  };
 
   constructor(fps: number = 60) {
     this.target_fpms = fps / 1000;
@@ -52,7 +75,10 @@ export class BrowserTicker implements Disposable {
       }
       this.last_time = current_time;
 
-      fn(this.delta_time);
+      this.current_ticker_data.delta_time = this.delta_time;
+      this.current_ticker_data.elapsed_ms = this.elapsed_ms;
+      this.current_ticker_data.last_time = this.last_time;
+      fn(this.current_ticker_data);
 
       this.raf_id = globalThis.requestAnimationFrame(update_loop);
     };
