@@ -17,10 +17,10 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   await kl.load_texture("./character_green_front.png");
 
   const ticker = new BrowserTicker();
-  ticker.on_tick((delta) => {
+  ticker.on_tick(({ delta_time }) => {
     // Update position
-    x += vx * delta;
-    y += vy * delta;
+    x += vx * delta_time;
+    y += vy * delta_time;
 
     // Bounce off horizontal walls
     if (x + (mask_radius * 2) >= CANVAS_WIDTH || x <= 0) {

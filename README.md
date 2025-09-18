@@ -46,10 +46,10 @@ async function main() {
   const kl = new Karlib({canvas, env: new BrowserEnv()});
 
   const ticker = new BrowserTicker();
-  ticker.on_tick((delta) => {
+  ticker.on_tick(({ delta_time }) => {
     // Update position
-    x += vx * delta;
-    y += vy * delta;
+    x += vx * delta_time;
+    y += vy * delta_time;
 
     // Bounce off horizontal walls
     if (x + rect_width >= width || x <= 0) {
