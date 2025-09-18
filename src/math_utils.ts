@@ -22,6 +22,10 @@ export function degree_to_radians(degree: number): number {
   return (degree * Math.PI) / 180;
 }
 
+export function radians_to_degrees(radians: number): number {
+  return radians * (180 / Math.PI);
+}
+
 /**
  * @returns value in radians
  */
@@ -31,10 +35,52 @@ export function angle_between_two_points(p1: Point, p2: Point): number {
   return Math.atan2(dy, dx);
 }
 
+/**
+ * @param degree in degree
+ * @returns in degree
+ */
+export function normalize_angle(degree: number): number {
+  degree = degree % 360;
+  return degree < 0 ? degree + 360 : degree;
+}
+
+/**
+ * @param angle1_degree in degree
+ * @param angle2_degree in degree
+ * @returns in degree
+ */
+export function get_angle_difference(angle1_degree: number, angle2_degree: number): number {
+  const diff = Math.abs(angle1_degree - angle2_degree);
+  return Math.min(diff, 360 - diff);
+}
+
 export function clamp(value: number, min: number, max: number): number {
   if (min > max) [min, max] = [max, min]; // tolerate swapped bounds
   return value < min ? min : value > max ? max : value;
 }
+
+export function map_range(
+  value: number,
+  rangeA: number,
+  rangeB: number,
+  targetRangeA: number,
+  targetRangeB: number
+): number {
+  if (targetRangeA === targetRangeB || rangeA === rangeB) {
+    return targetRangeA;
+  }
+  let normalizedValue = value;
+  if (normalizedValue < rangeA) {
+    normalizedValue = rangeA;
+  } else if (normalizedValue > rangeB) {
+    normalizedValue = rangeB;
+  }
+  // first map value from (a..b) to (0..1)
+  const v = (normalizedValue - rangeA) / (rangeB - rangeA);
+  // then map it from (0..1) to (c..d) and return it
+  return targetRangeA + v * (targetRangeB - targetRangeA);
+}
+
 /**
  * Linearly interpolates between to any two values at time t.
  *
