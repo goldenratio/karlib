@@ -59,9 +59,8 @@ export class TextureUtil {
     const cache_key = `${source.get_id()}`;
     const cache_data = this.canvas_pattern_cache.get(cache_key);
     if (cache_data) {
-      // setting null fails in skia-canvas
-      const empty: DOMMatrix2DInit = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
-      cache_data.setTransform(empty);
+      const reset_transform: DOMMatrix2DInit = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+      cache_data.setTransform(reset_transform);
       return cache_data;
     }
 
