@@ -65,26 +65,19 @@ export class TextureUtil {
       return cache_data;
     }
 
+    const repetition = "repeat";
     const img_src = source.get_src();
     let pattern: CanvasPattern | undefined = undefined;
 
     try {
-      pattern = this.ctx.createPattern(img_src, "repeat") ?? undefined;
+      pattern = this.ctx.createPattern(img_src, repetition) ?? undefined;
     } catch (err) {
       if (err instanceof TypeError) {
         // TODO: REMOVE, when safari 16.x is no longer supported
         // iOS safari 16.x, doesn't support ImageBitmap in createPattern method
         // Apple still doesn't fix this shit.
         // fallback impl
-        const temp_canvas = this.env.create_canvas(img_src.width, img_src.height);
-        const temp_context2d = temp_canvas.getContext("2d");
-        if (temp_context2d) {
-          const scale_mode = source.get_scale_mode();
-          const smooth_texture = scale_mode === SCALE_MODE.Linear;
-          temp_context2d.imageSmoothingEnabled = smooth_texture;
-          temp_context2d.drawImage(img_src, 0, 0);
-          pattern = this.ctx.createPattern(temp_canvas, "repeat") ?? undefined;
-        }
+        pattern = this.create_canvas_pattern_from_canvas(source, repetition);
       }
     }
 
@@ -92,6 +85,20 @@ export class TextureUtil {
       this.canvas_pattern_cache.set(cache_key, pattern);
     }
     return pattern ?? undefined;
+  }
+
+  private create_canvas_pattern_from_canvas(source: Texture, repetition: string): CanvasPattern | undefined {
+    const img_src = source.get_src();
+    const temp_canvas = this.env.create_canvas(img_src.width, img_src.height);
+    const temp_context2d = temp_canvas.getContext("2d");
+    if (temp_context2d) {
+      const scale_mode = source.get_scale_mode();
+      const smooth_texture = scale_mode === SCALE_MODE.Linear;
+      temp_context2d.imageSmoothingEnabled = smooth_texture;
+      temp_context2d.drawImage(img_src, 0, 0);
+      return this.ctx.createPattern(temp_canvas, repetition) ?? undefined;
+    }
+    return undefined;
   }
 
   dispose(): void {
