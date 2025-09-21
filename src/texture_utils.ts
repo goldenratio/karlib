@@ -60,15 +60,45 @@ export class TextureUtil {
     const cache_data = this.canvas_pattern_cache.get(cache_key);
     if (cache_data) {
       // setting null fails in skia-canvas
-      cache_data.setTransform({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 });
+      const empty: DOMMatrix2DInit = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+      cache_data.setTransform(empty);
       return cache_data;
     }
 
-    const pattern = this.ctx.createPattern(source.get_src(), "repeat");
+    const repetition = "repeat";
+    const img_src = source.get_src();
+    let pattern: CanvasPattern | undefined = undefined;
+
+    try {
+      pattern = this.ctx.createPattern(img_src, repetition) ?? undefined;
+    } catch (err) {
+      if (err instanceof TypeError) {
+        // TODO: REMOVE, when safari 16.x is no longer supported
+        // iOS safari 16.x, doesn't support ImageBitmap in createPattern method
+        // Apple still doesn't fix this shit.
+        // fallback impl
+        pattern = this.create_canvas_pattern_from_canvas(source, repetition);
+      }
+    }
+
     if (pattern) {
       this.canvas_pattern_cache.set(cache_key, pattern);
     }
     return pattern ?? undefined;
+  }
+
+  private create_canvas_pattern_from_canvas(source: Texture, repetition: string): CanvasPattern | undefined {
+    const img_src = source.get_src();
+    const temp_canvas = this.env.create_canvas(img_src.width, img_src.height);
+    const temp_context2d = temp_canvas.getContext("2d");
+    if (temp_context2d) {
+      const scale_mode = source.get_scale_mode();
+      const smooth_texture = scale_mode === SCALE_MODE.Linear;
+      temp_context2d.imageSmoothingEnabled = smooth_texture;
+      temp_context2d.drawImage(img_src, 0, 0);
+      return this.ctx.createPattern(temp_canvas, repetition) ?? undefined;
+    }
+    return undefined;
   }
 
   dispose(): void {
