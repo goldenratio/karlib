@@ -18,11 +18,11 @@ export function random_float(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
 
-export function degree_to_radians(degree: number): number {
+export function to_radians(degree: number): number {
   return (degree * Math.PI) / 180;
 }
 
-export function radians_to_degrees(radians: number): number {
+export function to_degrees(radians: number): number {
   return radians * (180 / Math.PI);
 }
 
@@ -61,24 +61,24 @@ export function clamp(value: number, min: number, max: number): number {
 
 export function map_range(
   value: number,
-  rangeA: number,
-  rangeB: number,
-  targetRangeA: number,
-  targetRangeB: number
+  range1: number,
+  range2: number,
+  target_range1: number,
+  target_range2: number
 ): number {
-  if (targetRangeA === targetRangeB || rangeA === rangeB) {
-    return targetRangeA;
+  if (target_range1 === target_range2 || range1 === range2) {
+    return target_range1;
   }
   let normalizedValue = value;
-  if (normalizedValue < rangeA) {
-    normalizedValue = rangeA;
-  } else if (normalizedValue > rangeB) {
-    normalizedValue = rangeB;
+  if (normalizedValue < range1) {
+    normalizedValue = range1;
+  } else if (normalizedValue > range2) {
+    normalizedValue = range2;
   }
   // first map value from (a..b) to (0..1)
-  const v = (normalizedValue - rangeA) / (rangeB - rangeA);
+  const v = (normalizedValue - range1) / (range2 - range1);
   // then map it from (0..1) to (c..d) and return it
-  return targetRangeA + v * (targetRangeB - targetRangeA);
+  return target_range1 + v * (target_range2 - target_range1);
 }
 
 /**
@@ -90,21 +90,6 @@ export function map_range(
  */
 export function lerp(value0: number, value1: number, time: number) {
   return value0 + (value1 - value0) * time;
-}
-
-export function generate_uuid(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
-  }
-  return legacy_uuid_v4();
-}
-
-function legacy_uuid_v4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
 }
 
 export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boolean {
