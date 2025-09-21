@@ -2,7 +2,7 @@ import { unwrap } from "./assert_utils.js";
 import { SCALE_MODE } from "./constants.js";
 import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
-import { degree_to_radians } from "./math_utils.js";
+import { to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
 import { generate_textures_from_spritesheet_tp, get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
 import type {
@@ -152,7 +152,7 @@ export class Karlib implements Disposable {
       ctx.scale(sx, sy);
     }
 
-    ctx.rotate(degree_to_radians(rotate));
+    ctx.rotate(to_radians(rotate));
 
     // Fill
     ctx.fillStyle = fill_style;
@@ -259,7 +259,7 @@ export class Karlib implements Disposable {
     }
 
     if (rotate > 0) {
-      ctx.rotate(degree_to_radians(rotate));
+      ctx.rotate(to_radians(rotate));
     }
 
     const image = typeof tint_color === "undefined"
