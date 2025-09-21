@@ -3,6 +3,10 @@ import type { LoadImageOptions } from "../types/index.js";
 import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
+  get_device_pixel_ratio(): number {
+    return Math.ceil(window.devicePixelRatio || 1);
+  }
+
   create_canvas(width: number, height: number): OffscreenCanvas {
     return new OffscreenCanvas(width, height)
   }
