@@ -35,6 +35,13 @@ export function angle_between_two_points(p1: Point, p2: Point): number {
   return Math.atan2(dy, dx);
 }
 
+export function vec_from_angle(radians: number, radius: number = 1): Point {
+  return {
+    x: Math.cos(radians) * radius,
+    y: Math.sin(radians) * radius,
+  };
+}
+
 /**
  * @param degree in degree
  * @returns in degree

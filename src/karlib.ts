@@ -21,15 +21,17 @@ export class Karlib implements Disposable {
   private readonly env: EnvProvider;
   private readonly res_textures = new Map<string, Texture>();
   private readonly pixel_perfect: boolean;
+  private readonly transparent_background: boolean;
 
   constructor(options: InitOptions) {
-    const { canvas, env, pixel_perfect = false } = options;
+    const { canvas, env, pixel_perfect = false, transparent_background = false } = options;
     this.pixel_perfect = pixel_perfect;
+    this.transparent_background = transparent_background;
     this.env = env;
     this.canvas_size = { width: canvas.width, height: canvas.height };
 
     const ctx = unwrap(canvas.getContext('2d', {
-      alpha: false,
+      alpha: transparent_background,
       willReadFrequently: false,
     }), "Unable to get 2D rendering context");
 
@@ -78,8 +80,12 @@ export class Karlib implements Disposable {
   clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
+    if (!this.transparent_background) {
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
+    } else {
+      ctx.clearRect(0, 0, this.canvas_size.width, this.canvas_size.height);
+    }
     ctx.restore();
   }
 

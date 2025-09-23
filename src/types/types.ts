@@ -28,6 +28,13 @@ export interface InitOptions {
   readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   readonly env: EnvProvider;
   /**
+   * set this to true for transparent background
+   * Warning: browsers may not target GPU for rendering, when background is set to transparent.
+   * This will cause low performance.
+   * @default false
+   */
+  readonly transparent_background?: boolean;
+  /**
    * set this to true for pixel art games
    * @default false
    */
