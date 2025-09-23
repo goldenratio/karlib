@@ -47,7 +47,7 @@ export interface DrawLineOptions {
   readonly fill_style: FillStyle;
   readonly thickness?: number;
   /**
-   * @default 'round'
+   * @default "butt"
    */
   readonly lineCap?: CanvasLineCap;
 }
