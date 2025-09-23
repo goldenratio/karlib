@@ -126,6 +126,10 @@ export interface EventEmitterOnOffLike {
 }
 
 export interface LoadImageOptions {
+  /**
+   * Scales image to the given value, when loading
+   * Can be useful, If you want to pre-scale the image, so you don't need to scale in game loop
+   */
   readonly scale?: number;
   readonly scale_mode?: ScaleMode;
 }
