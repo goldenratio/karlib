@@ -2,7 +2,7 @@ import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
-import type { LoadImageOptions, SpriteSheetData } from "./types/index.js";
+import type { LoadTextureOptions, ScaleMode, SpriteSheetData } from "./types/index.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();
@@ -118,8 +118,8 @@ export function get_texture_name_from_file_path(file_path: string): string {
 
 export async function generate_textures_from_spritesheet_tp(
   json_file: string | SpriteSheetData,
-  options: LoadImageOptions,
-  env: EnvProvider
+  options: LoadTextureOptions,
+  env: EnvProvider,
 ): Promise<Map<string, Texture>> {
   const result: Map<string, Texture> = new Map();
   let json_data: SpriteSheetData | undefined = undefined;
@@ -135,7 +135,7 @@ export async function generate_textures_from_spritesheet_tp(
   }
 
   const png_file_path = json_data["meta"]["image"];
-  const src_img_data = await env.load_image(png_file_path);
+  const src_img_data = typeof png_file_path === "string" ? await env.load_image(png_file_path) : undefined;
   if (!src_img_data) {
     return result;
   }
@@ -146,7 +146,10 @@ export async function generate_textures_from_spritesheet_tp(
     return result;
   }
 
-  const { scale = 1, scale_mode = SCALE_MODE.Linear } = options;
+  const { scale_mode, pre_scale = 1 } = options;
+  const texture_scale = json_data["meta"]["scale"] ?? 1;
+  const scale = typeof texture_scale === "number" ? pre_scale / texture_scale : pre_scale;
+
   const smooth_texture = scale_mode === SCALE_MODE.Linear;
 
   // NOTE: use bracket notation, instead of dot when accessing from `json_data`,
@@ -171,4 +174,22 @@ export async function generate_textures_from_spritesheet_tp(
   // in skia-canvas close function doesn't exist
   src_img_data.close?.();
   return result;
+}
+
+function find_nearest(arr: readonly number[], target: number): number {
+  return arr.reduce((prev, curr) =>
+    Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev
+  );
+}
+
+export function get_dpr_resource_file_path(image_file_path: string, env: EnvProvider, available_dpr_scales?: readonly number[]): { readonly res_url: string; readonly res_dpr_scale?: number } {
+  const dpr_token = "{dpr}";
+  const dpr = env.get_device_pixel_ratio();
+  let res_dpr_scale: number | undefined = undefined;
+
+  if (available_dpr_scales && available_dpr_scales.length > 0 && image_file_path.includes(dpr_token)) {
+    res_dpr_scale = find_nearest(available_dpr_scales, dpr);
+  };
+  const updated_image_file_path = typeof res_dpr_scale === "number" ? image_file_path.replaceAll(dpr_token, res_dpr_scale.toString()) : image_file_path;
+  return { res_url: updated_image_file_path, res_dpr_scale };
 }

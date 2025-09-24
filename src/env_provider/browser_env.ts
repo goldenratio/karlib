@@ -1,10 +1,16 @@
 import { SCALE_MODE } from "../constants.js";
-import type { LoadImageOptions } from "../types/index.js";
+import type { LoadTextureOptions } from "../types/index.js";
 import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider {
+  private readonly dpr: number;
+
+  constructor() {
+    this.dpr = Math.ceil(window.devicePixelRatio || 1);
+  }
+
   get_device_pixel_ratio(): number {
-    return Math.ceil(window.devicePixelRatio || 1);
+    return this.dpr
   }
 
   create_canvas(width: number, height: number): OffscreenCanvas {
@@ -15,19 +21,19 @@ export class BrowserEnv implements EnvProvider {
     return canvas.transferToImageBitmap();
   }
 
-  load_image(url: string, options?: LoadImageOptions): Promise<ImageBitmap | undefined> {
-    const { scale = 1, scale_mode = SCALE_MODE.Linear } = options ?? {};
+  load_image(url: string, options?: LoadTextureOptions): Promise<ImageBitmap | undefined> {
+    const { pre_scale = 1, scale_mode = SCALE_MODE.Linear, available_dpr_scales } = options ?? {};
     return new Promise(async (resolve) => {
       try {
         const blob = await fetch(url).then(r => r.blob());
         const bitmap = await createImageBitmap(blob);
-        if (scale === 1) {
+        if (pre_scale === 1) {
           resolve(bitmap);
           return;
         }
 
-        const width = Math.round(bitmap.width * scale);
-        const height = Math.round(bitmap.height * scale);
+        const width = Math.round(bitmap.width * pre_scale);
+        const height = Math.round(bitmap.height * pre_scale);
 
         const canvas = this.create_canvas(width, height);
         const ctx = canvas.getContext("2d");
