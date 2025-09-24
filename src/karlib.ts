@@ -35,7 +35,7 @@ export class Karlib implements Disposable {
     this.env = env;
     this.canvas_size = { width: canvas.width, height: canvas.height };
 
-    const ctx = unwrap(canvas.getContext('2d', {
+    const ctx = unwrap(canvas.getContext("2d", {
       alpha: transparent_background,
       willReadFrequently: false,
     }), "Unable to get 2D rendering context");
@@ -250,7 +250,7 @@ export class Karlib implements Disposable {
       source_rect,
     } = options;
 
-    const texture = typeof texture_opt === 'string'
+    const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
@@ -309,7 +309,7 @@ export class Karlib implements Disposable {
       tile_scale, tile_rotate = 0, tile_alpha = 1,
     } = options;
 
-    const texture = typeof texture_opt === 'string'
+    const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
