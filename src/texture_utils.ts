@@ -176,7 +176,6 @@ export async function generate_textures_from_spritesheet_tp(
   return result;
 }
 
-
 function find_nearest(arr: readonly number[], target: number): number {
   return arr.reduce((prev, curr) =>
     Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev
