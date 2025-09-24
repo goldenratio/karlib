@@ -440,6 +440,10 @@ export class Karlib implements Disposable {
     return this.texture_util.get_tinted_texture(source, tint_color, tint_alpha);
   }
 
+  get_texture_from_name(name: string): Texture | undefined {
+    return this.res_textures.get(name);
+  }
+
   get_env(): EnvProvider {
     return this.env;
   }
