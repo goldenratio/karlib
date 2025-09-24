@@ -16,6 +16,10 @@ interface Frame {
 
 interface Meta {
   readonly image: string;
+  /**
+   * @default 1
+   */
+  readonly scale?: number;
 }
 
 interface Size {

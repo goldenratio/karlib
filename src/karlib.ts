@@ -4,12 +4,17 @@ import type { Disposable } from "./dispose_bag.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
-import { generate_textures_from_spritesheet_tp, get_texture_name_from_file_path, TextureUtil } from "./texture_utils.js";
+import {
+  generate_textures_from_spritesheet_tp,
+  get_dpr_resource_file_path,
+  get_texture_name_from_file_path,
+  TextureUtil
+} from "./texture_utils.js";
 import type {
   DrawCircleOptions, DrawLineOptions, DrawRectangleOptions,
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
-  Size, ScaleMode,
-  LoadImageOptions,
+  Size,
+  LoadTextureOptions,
   SpriteSheetData,
   MaskSource
 } from "./types/index.js";
@@ -47,11 +52,16 @@ export class Karlib implements Disposable {
     this.res_textures.set(texture_name, texture);
   }
 
-  async load_texture(image_file_path: string, options?: LoadImageOptions): Promise<Texture | undefined> {
-    const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+  /**
+   * Loads image and converts it to texture.
+   * If the image path contains token "{dpr}", then when loading the image,"{dpr}" value is replaced with device-pixel-ratio.
+   */
+  async load_texture(image_file_path: string, options?: LoadTextureOptions): Promise<Texture | undefined> {
+    const scale_mode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
     const updated_options = { scale_mode, ...options };
-    const img = await this.env.load_image(image_file_path, updated_options);
-    const texture = img ? new Texture(img, img.width, img.height, scale_mode) : undefined;
+    const { res_url: texture_url, res_dpr_scale: texture_dpr_scale = 1 } = get_dpr_resource_file_path(image_file_path, this.env, updated_options.available_dpr_scales);
+    const img = await this.env.load_image(texture_url, updated_options);
+    const texture = img ? new Texture(img, img.width, img.height, scale_mode, texture_dpr_scale) : undefined;
     if (texture) {
       const texture_name = get_texture_name_from_file_path(image_file_path);
       this.add_texture_cache(texture_name, texture);
@@ -61,13 +71,20 @@ export class Karlib implements Disposable {
 
   /**
    * Minimal support for TexturePacker exported spritesheet
-   * Supports only hash format
+   * Supports only JSON hash format
+   * If the path contains token "{dpr}", then when loading the file, "{dpr}" value is replaced with device-pixel-ratio.
    */
-  async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: LoadImageOptions): Promise<Map<string, Texture>> {
-    const scale_mode: ScaleMode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
-    const updated_options: LoadImageOptions = { scale_mode, ...options ?? {} };
+  async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: LoadTextureOptions): Promise<Map<string, Texture>> {
+    const scale_mode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
+    const updated_options = { scale_mode, ...options };
+    let updated_json_file_path: string | SpriteSheetData = json_file_path;
 
-    const result = await generate_textures_from_spritesheet_tp(json_file_path, updated_options, this.env);
+    if (typeof json_file_path === "string") {
+      const { res_url } = get_dpr_resource_file_path(json_file_path, this.env, updated_options.available_dpr_scales);
+      updated_json_file_path = res_url;
+    }
+
+    const result = await generate_textures_from_spritesheet_tp(updated_json_file_path, updated_options, this.env);
     result.forEach((texture, texture_name) => {
       this.add_texture_cache(texture_name, texture);
     });
@@ -237,6 +254,7 @@ export class Karlib implements Disposable {
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
+    const texture_dpr_scale = texture.get_dpr_scale();
     const ctx = this.context2d;
 
     const w = width ?? texture.get_width();
@@ -246,8 +264,8 @@ export class Karlib implements Disposable {
     const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * w : pivot.x;
     const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * h : pivot.y;
 
-    const sx = typeof scale === "number" ? scale : scale.x;
-    const sy = typeof scale === "number" ? scale : scale.y;
+    const sx = (typeof scale === "number" ? scale : scale.x) / texture_dpr_scale;
+    const sy = (typeof scale === "number" ? scale : scale.y) / texture_dpr_scale;
 
     if (sx === 0 || sy === 0 || alpha === 0) {
       return;
@@ -393,7 +411,7 @@ export class Karlib implements Disposable {
        * what's the issue?
        * Masking operation affects the entire canvas, not just the content drawn within the `draw_fn`.
        * So draw calls done before `draw_fn` will be lost.
-       * I think, it's fine 99% of the usecase.
+       * I think, it's fine 99% of the use case.
        */
       draw_fn(this);
       ctx.globalCompositeOperation = "destination-in";

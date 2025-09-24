@@ -8,14 +8,16 @@ export class Texture {
   private readonly width: number;
   private readonly height: number;
   private readonly id: string;
+  private readonly dpr_scale: number;
 
   private scale_mode: ScaleMode = SCALE_MODE.Linear;
 
-  constructor(src: ImageBitmap, width: number, height: number, scale_mode: ScaleMode = SCALE_MODE.Linear) {
+  constructor(src: ImageBitmap, width: number, height: number, scale_mode: ScaleMode = SCALE_MODE.Linear, dpr_scale: number = 1) {
     this.src = src;
     this.width = width;
     this.height = height;
     this.scale_mode = scale_mode;
+    this.dpr_scale = dpr_scale;
     id++;
     this.id = id.toString();
   }
@@ -42,6 +44,10 @@ export class Texture {
 
   get_scale_mode(): ScaleMode {
     return this.scale_mode;
+  }
+
+  get_dpr_scale(): number {
+    return this.dpr_scale;
   }
 
   dispose(): void {

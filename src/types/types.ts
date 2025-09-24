@@ -125,13 +125,14 @@ export interface EventEmitterOnOffLike {
   off(event: string | symbol, listener?: Function): this;
 }
 
-export interface LoadImageOptions {
+export interface LoadTextureOptions {
   /**
    * Scales image to the given value, when loading
    * Can be useful, If you want to pre-scale the image, so you don't need to scale in game loop
    */
-  readonly scale?: number;
+  readonly pre_scale?: number;
   readonly scale_mode?: ScaleMode;
+  readonly available_dpr_scales?: readonly number[];
 }
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
