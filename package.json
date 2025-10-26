@@ -15,6 +15,7 @@
     "clean": "rm -rf target js",
     "build": "npm run clean && tsc && node ./build.ts",
     "example": "npm run clean && node ./example_server.ts",
+    "generate-docs": "rm -rf ./docs && typedoc --theme default --excludePrivate --excludeProtected",
     "version": "npm run build",
     "postversion": "git push && git push --tags"
   },
@@ -35,8 +36,9 @@
   ],
   "homepage": "https://github.com/goldenratio/karlib#readme",
   "devDependencies": {
-    "@types/node": "24.3.0",
-    "esbuild": "0.25.9",
-    "typescript": "5.9.2"
+    "@types/node": "24.7.2",
+    "esbuild": "0.25.10",
+    "typedoc": "0.28.14",
+    "typescript": "5.9.3"
   }
 }
