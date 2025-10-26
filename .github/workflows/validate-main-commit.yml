@@ -1,0 +1,22 @@
+name: Build on main branch commit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-main-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm ci
+      - name: Run build
+        run: npm run build
