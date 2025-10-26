@@ -3,26 +3,21 @@ export interface SpriteSheetData {
   readonly meta: Meta;
 }
 
-interface FrameData {
+export interface FrameData {
   readonly frame: Frame;
 }
 
-interface Frame {
+export interface Frame {
   readonly x: number;
   readonly y: number;
   readonly w: number;
   readonly h: number;
 }
 
-interface Meta {
+export interface Meta {
   readonly image: string;
   /**
    * @default 1
    */
   readonly scale?: number;
-}
-
-interface Size {
-  readonly w: number;
-  readonly h: number;
 }

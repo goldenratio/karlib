@@ -18,6 +18,14 @@ export function random_float(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
 
+/**
+ * Get random item from an array
+ */
+export function random_item_from_array<T = unknown>(src: readonly T[]): T | undefined {
+  const idx = random_int(0, src.length - 1);
+  return src[idx] ?? undefined;
+}
+
 export function to_radians(degree: number): number {
   return (degree * Math.PI) / 180;
 }

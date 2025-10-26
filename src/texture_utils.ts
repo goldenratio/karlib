@@ -2,7 +2,7 @@ import { Texture } from "./texture.js";
 import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
-import type { LoadTextureOptions, ScaleMode, SpriteSheetData } from "./types/index.js";
+import type { LoadTextureOptions, ScaleMode, SpriteSheetData, SpriteSheetLoadTextureOptions } from "./types/index.js";
 
 export class TextureUtil {
   private readonly cache: Map<string, Texture> = new Map();
@@ -118,7 +118,7 @@ export function get_texture_name_from_file_path(file_path: string): string {
 
 export async function generate_textures_from_spritesheet_tp(
   json_file: string | SpriteSheetData,
-  options: LoadTextureOptions,
+  options: SpriteSheetLoadTextureOptions,
   env: EnvProvider,
 ): Promise<Map<string, Texture>> {
   const result: Map<string, Texture> = new Map();

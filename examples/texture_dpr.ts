@@ -11,14 +11,14 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     env: new BrowserEnv(),
   });
 
-  await kl.load_texture("./character_beige_front@{dpr}x.png", { available_dpr_scales: [1, 2] });
+  await kl.load_texture("./character_beige_front@{dpr}x.png", { available_dpr_scales: [1, 2], alias: "character_beige_front" });
 
   const ticker = new BrowserTicker();
-  ticker.on_tick((delta) => {
+  ticker.on_tick(ticker_data => {
     kl.clear_background("#000");
 
     kl.draw_texture({
-      texture: "character_beige_front@{dpr}x",
+      texture: "character_beige_front",
       x: 100,
       y: 100,
     });

@@ -7,21 +7,25 @@ export interface TickerData {
    * Ideally value should be 16.66 ms
    */
   readonly elapsed_ms: number;
+
   /**
    * last updated `performance.now()`
    */
   readonly last_time: number;
 
   /**
-   * Ideally value between 0 and 1
+   * Scalar representing the delta time factor.
+   * This is a dimensionless value representing the fraction of a frame at the target framerate.
+   * At 60 FPS, this value is typically around 1.0.
+   *
+   * This is NOT in milliseconds - it's a scalar multiplier for frame-independent animations.
    */
   readonly delta_time: number;
 }
 
 /**
  * Callback for ticker updates.
- *
- * @param delta_time - Scalar time value from last frame to this frame. This is NOT in milliseconds.
+ * @param ticker_data
  */
 export type TickerCallbackType = (ticker_data: TickerData) => void;
 

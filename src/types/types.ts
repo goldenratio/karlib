@@ -49,7 +49,7 @@ export interface DrawLineOptions {
   /**
    * @default "butt"
    */
-  readonly lineCap?: CanvasLineCap;
+  readonly line_cap?: CanvasLineCap;
 }
 
 export interface DrawRectangleOptions {
@@ -59,6 +59,10 @@ export interface DrawRectangleOptions {
   readonly y?: number;
   readonly fill_style?: FillStyle;
   readonly outline_size?: number;
+  readonly outline_cap?: CanvasLineCap;
+  /**
+   * @default "butt"
+   */
   readonly outline_style?: OutlineStyle;
   // in degrees
   readonly rotate?: number;
@@ -109,8 +113,16 @@ export interface DrawTextureTileOptions {
   readonly tile_alpha?: number;
 }
 
+// shallow mutable
+// export type Mutable<T> = {
+//   -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? U[] : T[P];
+// };
+
+// deep mutable
 export type Mutable<T> = {
-  -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? U[] : T[P];
+  -readonly [P in keyof T]: T[P] extends object
+  ? Mutable<T[P]>
+  : T[P];
 };
 
 export interface EventEmitterLike {
@@ -133,7 +145,13 @@ export interface LoadTextureOptions {
   readonly pre_scale?: number;
   readonly scale_mode?: ScaleMode;
   readonly available_dpr_scales?: readonly number[];
+  /**
+   * Texture name alias
+   */
+  readonly alias?: string;
 }
+
+export type SpriteSheetLoadTextureOptions = Omit<LoadTextureOptions, "alias">;
 
 export type ScaleMode = typeof SCALE_MODE[keyof typeof SCALE_MODE];
 
@@ -152,3 +170,10 @@ export type MaskSource =
     readonly pivot?: Point;
     readonly scale?: number | Point;
   };
+
+export interface Camera2D {
+  readonly offset: Point,
+  readonly target: Point,
+  readonly rotation: number,
+  readonly zoom: number,
+}

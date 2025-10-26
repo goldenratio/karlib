@@ -7,7 +7,7 @@
  * @throws {Error} If `obj` is `undefined` or `null`.
  */
 export function assert_exists(obj: unknown, assertion: string): void {
-  if (typeof obj === 'undefined' || obj === null) {
+  if (typeof obj === "undefined" || obj === null) {
     throw new Error(assertion);
   }
 }
@@ -20,7 +20,7 @@ export function assert_exists(obj: unknown, assertion: string): void {
  * @throws {Error} Always throws an error with the unhandled case message.
  */
 export function assert_never(value: never): never {
-  throw new Error('unhandled case ', value);
+  throw new Error("unhandled case ", value);
 }
 
 /**

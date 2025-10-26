@@ -16,7 +16,9 @@ import type {
   Size,
   LoadTextureOptions,
   SpriteSheetData,
-  MaskSource
+  MaskSource,
+  SpriteSheetLoadTextureOptions,
+  Camera2D,
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -63,7 +65,7 @@ export class Karlib implements Disposable {
     const img = await this.env.load_image(texture_url, updated_options);
     const texture = img ? new Texture(img, img.width, img.height, scale_mode, texture_dpr_scale) : undefined;
     if (texture) {
-      const texture_name = get_texture_name_from_file_path(image_file_path);
+      const texture_name = updated_options.alias ?? get_texture_name_from_file_path(image_file_path);
       this.add_texture_cache(texture_name, texture);
     }
     return texture;
@@ -74,7 +76,7 @@ export class Karlib implements Disposable {
    * Supports only JSON hash format
    * If the path contains token "{dpr}", then when loading the file, "{dpr}" value is replaced with device-pixel-ratio.
    */
-  async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: LoadTextureOptions): Promise<Map<string, Texture>> {
+  async load_spritesheet_tp(json_file_path: string | SpriteSheetData, options?: SpriteSheetLoadTextureOptions): Promise<Map<string, Texture>> {
     const scale_mode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
     const updated_options = { scale_mode, ...options };
     let updated_json_file_path: string | SpriteSheetData = json_file_path;
@@ -107,7 +109,7 @@ export class Karlib implements Disposable {
   }
 
   draw_line(options: DrawLineOptions): void {
-    const { start, end, fill_style, thickness = 1, lineCap = "butt" } = options;
+    const { start, end, fill_style, thickness = 1, line_cap: lineCap = "butt" } = options;
 
     const ctx = this.context2d;
     ctx.save();
@@ -127,7 +129,7 @@ export class Karlib implements Disposable {
     const {
       width, height,
       x = 0, y = 0, fill_style = "#ff0000",
-      outline_size = 0, outline_style = "#ffffff",
+      outline_size = 0, outline_style = "#ffffff", outline_cap = "butt",
       rotate = 0, pivot = { x: 0, y: 0 },
       scale = 1, alpha = 1,
     } = options;
@@ -156,6 +158,7 @@ export class Karlib implements Disposable {
 
       if (outline_size > 0) {
         ctx.lineWidth = outline_size;
+        ctx.lineCap = outline_cap;
         ctx.strokeStyle = outline_style;
 
         // Half-pixel alignment for odd line widths
@@ -184,6 +187,7 @@ export class Karlib implements Disposable {
     // Outline (can’t guarantee pixel-perfect crispness under rotation)
     if (outline_size > 0) {
       ctx.lineWidth = outline_size;
+      ctx.lineCap = outline_cap;
       ctx.strokeStyle = outline_style;
       ctx.strokeRect(-pivot_x, -pivot_y, width, height);
     }
@@ -363,11 +367,11 @@ export class Karlib implements Disposable {
    * @param mask_source when not defined mask is not applied. By setting it to undefined, you can use it to disable/enable mask
    */
   draw_scissor_mode(
-    draw_fn: (kl: Karlib) => void,
+    draw_fn: () => void,
     mask_source?: MaskSource,
   ): void {
     if (!mask_source) {
-      draw_fn(this);
+      draw_fn();
       return;
     }
 
@@ -413,14 +417,47 @@ export class Karlib implements Disposable {
        * So draw calls done before `draw_fn` will be lost.
        * I think, it's fine 99% of the use case.
        */
-      draw_fn(this);
+      draw_fn();
       ctx.globalCompositeOperation = "destination-in";
       this.draw_texture({ texture: overlay_texture, x, y, pivot, scale });
       ctx.restore();
       return;
     }
 
-    draw_fn(this);
+    draw_fn();
+    ctx.restore();
+  }
+
+  /**
+   * Begin 2D mode with custom camera
+   */
+  draw_mode_2d(draw_fn: () => void, camera: Camera2D): void {
+    const { offset, target, rotation, zoom } = camera;
+
+    if (zoom <= 0) {
+      return;
+    }
+
+    const ctx = this.context2d;
+    ctx.save();
+
+    // Screen-space offset where the camera centers its target
+    ctx.translate(offset.x, offset.y);
+
+    // Zoom (scale around the origin after moving world so target is at origin)
+    if (zoom !== 1) {
+      ctx.scale(zoom, zoom);
+    }
+
+    // Rotation in degrees, around the target
+    if (rotation !== 0) {
+      ctx.rotate(to_radians(rotation));
+    }
+
+    // Move world so that the target sits at the origin for the above transforms
+    ctx.translate(-target.x, -target.y);
+
+    draw_fn();
     ctx.restore();
   }
 
@@ -461,6 +498,6 @@ export class Karlib implements Disposable {
 
     // Break references for GC
     // @ts-expect-error intentional nulling out
-    this.context2d = null;
+    this.context2d = undefined;
   }
 }

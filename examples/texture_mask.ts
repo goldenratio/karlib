@@ -1,4 +1,4 @@
-import { BrowserEnv, BrowserTicker, Karlib } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib, MaskSource, Mutable } from "../src";
 
 export const CANVAS_WIDTH = 918;
 export const CANVAS_HEIGHT = 515;
@@ -17,7 +17,9 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   await kl.load_texture("./character_green_front.png");
   await kl.load_texture("./texture_mask_blur.png");
 
+  const mask_source: Mutable<MaskSource> = { x: x, y: y, texture: "texture_mask_blur" };
   const ticker = new BrowserTicker();
+
   ticker.on_tick(({ delta_time }) => {
     // Update position
     x += vx * delta_time;
@@ -41,6 +43,8 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     // this texture won't not visible (expected) - performance reasons
     kl.draw_texture({ texture: "character_green_front", x: 100, y: 200 });
 
+    mask_source.x = x;
+    mask_source.y = y;
     kl.draw_scissor_mode(
       () => {
         // draw calls inside this function will be masked
@@ -50,7 +54,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
           y: 0,
         });
       },
-      { x: x, y: y, texture: "texture_mask_blur" },
+      mask_source,
     );
 
     kl.draw_texture({ texture: "character_green_front", x: 500, y: 200 });
