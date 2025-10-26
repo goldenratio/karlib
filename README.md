@@ -6,6 +6,10 @@
 > [!WARNING]
 > This library is in alpha state
 
+### API Docs
+
+https://goldenratio.github.io/karlib/
+
 ## Install
 
 ### NPM
