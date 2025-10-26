@@ -16,7 +16,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   await kl.load_spritesheet_tp("./spritesheet.json");
 
   const ticker = new BrowserTicker();
-  ticker.on_tick((delta) => {
+  ticker.on_tick(ticker_data => {
     kl.clear_background("#000");
 
     kl.draw_texture({

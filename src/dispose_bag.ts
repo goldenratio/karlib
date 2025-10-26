@@ -8,10 +8,10 @@ export type DisposeCallback = () => void;
 
 export function is_disposable(object: unknown): object is Disposable {
   return (
-    typeof object === 'object'
+    typeof object === "object"
     && object !== null
-    && 'dispose' in object
-    && typeof (object as { dispose?: unknown }).dispose === 'function'
+    && "dispose" in object
+    && typeof (object as { dispose?: unknown }).dispose === "function"
   );
 }
 
@@ -21,9 +21,9 @@ export class DisposeBag implements Disposable {
 
   add(item: DisposeCallback | Disposable): void {
     if (this.is_disposed) {
-      throw new Error('DisposeBag is already disposed, create new instance');
+      throw new Error("DisposeBag is already disposed, create new instance");
     }
-    if (typeof item === 'function') {
+    if (typeof item === "function") {
       this.list.add(() => item());
     } else if (is_disposable(item)) {
       this.list.add(() => item.dispose());
@@ -38,7 +38,7 @@ export class DisposeBag implements Disposable {
     listener: (event: TEvent) => void,
   ): void {
     if (this.is_disposed) {
-      throw new Error('DisposeBag is already disposed, create new instance');
+      throw new Error("DisposeBag is already disposed, create new instance");
     }
     const wrappedListener = (event: TEvent): void => {
       listener(event);

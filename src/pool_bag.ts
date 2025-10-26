@@ -27,9 +27,9 @@ export class PoolBag<TPoolType = unknown> implements Disposable {
     return this.items.size;
   }
 
-  set size(size: number) {
-    if (typeof size !== 'number') {
-      throw new Error('Parameter is not a number: ' + typeof size);
+  set_size(size: number) {
+    if (typeof size !== "number") {
+      throw new Error("Parameter is not a number: " + typeof size);
     }
 
     let current = this.items.size;
@@ -48,6 +48,7 @@ export class PoolBag<TPoolType = unknown> implements Disposable {
   }
 
   dispose(): void {
+    this.items.forEach(value => this.on_destroy_pool_object(value));
     this.items.clear();
   }
 
