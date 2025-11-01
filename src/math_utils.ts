@@ -51,6 +51,7 @@ export function vec_from_angle(radians: number, radius: number = 1): Point {
 }
 
 /**
+ * Ensures that any given angle in degrees is converted (or “normalized”) to a value within the standard 0–359
  * @param degree in degree
  * @returns in degree
  */
