@@ -63,7 +63,7 @@ export class Karlib implements Disposable {
     const updated_options = { scale_mode, ...options };
     const { res_url: texture_url, res_dpr_scale: texture_dpr_scale = 1 } = get_dpr_resource_file_path(image_file_path, this.env, updated_options.available_dpr_scales);
     const img = await this.env.load_image(texture_url, updated_options);
-    const texture = img ? new Texture(img, img.width, img.height, scale_mode, texture_dpr_scale) : undefined;
+    const texture = img ? new Texture(img, img.width, img.height, updated_options.scale_mode, texture_dpr_scale) : undefined;
     if (texture) {
       const texture_name = updated_options.alias ?? get_texture_name_from_file_path(image_file_path);
       this.add_texture_cache(texture_name, texture);
