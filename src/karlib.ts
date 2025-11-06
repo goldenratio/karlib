@@ -434,7 +434,7 @@ export class Karlib implements Disposable {
   draw_mode_2d(draw_fn: () => void, camera: Camera2D): void {
     const { offset, target, rotation, zoom } = camera;
 
-    if (zoom <= 0) {
+    if (zoom === 0) {
       return;
     }
 
