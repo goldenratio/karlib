@@ -1,0 +1,13 @@
+{
+  "name": "@goldenratio/karlib",
+  "version": "0.0.13",
+  "license": "Zlib",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": [
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
+  }
+}
