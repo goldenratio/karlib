@@ -1,7 +1,7 @@
 {
   "name": "@goldenratio/karlib",
   "version": "0.0.13",
-  "license": "MIT",
+  "license": "Zlib",
   "exports": "./src/index.ts",
   "publish": {
     "include": [
