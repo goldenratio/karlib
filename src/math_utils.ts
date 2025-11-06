@@ -104,7 +104,7 @@ export function map_range(
  * @param value1 The destination value
  * @param time The unit time value (0-1)
  */
-export function lerp(value0: number, value1: number, time: number) {
+export function lerp(value0: number, value1: number, time: number): number {
   return value0 + (value1 - value0) * time;
 }
 
