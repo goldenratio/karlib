@@ -64,7 +64,9 @@ export interface DrawRectangleOptions {
    * @default "butt"
    */
   readonly outline_style?: OutlineStyle;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly rotate?: number;
   readonly pivot?: Point;
   readonly scale?: number | Point;
@@ -89,7 +91,9 @@ export interface DrawTextureOptions {
   readonly y?: number;
   readonly width?: number;
   readonly height?: number;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly rotate?: number;
   readonly pivot?: Point;
   readonly scale?: number | Point;
@@ -107,7 +111,9 @@ export interface DrawTextureTileOptions {
   readonly height: number;
   readonly tile_position_x?: number;
   readonly tile_position_y?: number;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly tile_rotate?: number;
   readonly tile_scale?: number | Point;
   readonly tile_alpha?: number;
@@ -174,6 +180,9 @@ export type MaskSource =
 export interface Camera2D {
   readonly offset: Point,
   readonly target: Point,
+  /**
+   * in degrees
+   */
   readonly rotation: number,
   readonly zoom: number,
 }
