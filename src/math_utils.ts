@@ -134,3 +134,9 @@ export function next_pow2(v: number): number {
 export function is_pow2(v: number): boolean {
   return !(v & (v - 1)) && (!!v);
 }
+
+export function distance_between_two_points(p1: Point, p2: Point): number {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
