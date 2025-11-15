@@ -413,15 +413,8 @@ export class Karlib implements Disposable {
     const texture_height = texture.get_height();
     const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
 
-    const ctx = this.context2d;
     const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * width : pivot.x;
     const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * height : pivot.y;
-
-    ctx.save();
-    ctx.globalAlpha = ctx.globalAlpha * alpha;
-    ctx.translate(x, y);
-    ctx.translate(-pivot_x | 0, -pivot_y | 0);
-    ctx.imageSmoothingEnabled = smooth_texture;
 
     // Source width/height for the center slice (Original texture size minus the corners/edges)
     const source_center_width = texture_width - left_width - right_width;
@@ -433,9 +426,15 @@ export class Karlib implements Disposable {
 
     // Check if the source or destination centers are invalid
     if (source_center_width < 0 || source_center_height < 0 || dest_center_width < left_width || dest_center_height < top_height) {
-      ctx.restore();
       return;
     }
+
+    const ctx = this.context2d;
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+    ctx.translate(x, y);
+    ctx.translate(-pivot_x | 0, -pivot_y | 0);
+    ctx.imageSmoothingEnabled = smooth_texture;
 
     // --- Draw all 9 slices ---
     // A helper for drawing a slice (Source x, y, w, h -> Dest x, y, w, h)
