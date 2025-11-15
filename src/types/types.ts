@@ -123,10 +123,10 @@ export interface DrawNineSliceTextureOptions {
   readonly texture: Texture | string;
   readonly x?: number;
   readonly y?: number;
-  readonly left_width?: number;
-  readonly right_width?: number;
-  readonly top_height?: number;
-  readonly bottom_height?: number;
+  readonly left_width: number;
+  readonly right_width: number;
+  readonly top_height: number;
+  readonly bottom_height: number;
   readonly width: number;
   readonly height: number;
   readonly alpha?: number;

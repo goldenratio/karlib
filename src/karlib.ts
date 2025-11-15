@@ -361,9 +361,10 @@ export class Karlib implements Disposable {
   draw_nine_slice_texture(options: DrawNineSliceTextureOptions): void {
     const {
       texture: texture_opt,
-      x = 0, y = 0, width, height,
+      x = 0, y = 0,
       alpha = 1,
-      left_width = 0, right_width = 0, top_height = 0, bottom_height = 0,
+      width, height,
+      left_width, right_width, top_height, bottom_height,
     } = options;
 
     const texture = typeof texture_opt === "string"
