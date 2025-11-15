@@ -310,13 +310,14 @@ export class Karlib implements Disposable {
       texture: texture_opt,
       x = 0, y = 0, width, height,
       tile_position_x = 0, tile_position_y = 0,
-      tile_scale, tile_rotate = 0, tile_alpha = 1,
+      tile_scale = 1, tile_rotate = 0, tile_alpha = 1,
     } = options;
 
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
+    const texture_dpr_scale = texture.get_dpr_scale();
     const ctx = this.context2d;
 
     ctx.save();
@@ -332,22 +333,17 @@ export class Karlib implements Disposable {
       return;
     }
 
-    let matrix: DOMMatrix | undefined = undefined;
+    let matrix: DOMMatrix = this.env.create_dom_matrix();
 
-    if (typeof tile_scale !== "undefined") {
-      const sx = typeof tile_scale === "number" ? tile_scale : tile_scale.x;
-      const sy = typeof tile_scale === "number" ? tile_scale : tile_scale.y;
-      matrix = matrix ?? this.env.create_dom_matrix();
-      matrix = matrix.scale(sx, sy);
-    }
+    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / texture_dpr_scale;
+    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / texture_dpr_scale;
+    matrix = matrix.scale(sx, sy);
 
     if (tile_position_x !== 0 || tile_position_y !== 0) {
-      matrix = matrix ?? this.env.create_dom_matrix();
       matrix = matrix.translate(tile_position_x, tile_position_y);
     }
 
     if (tile_rotate !== 0) {
-      matrix = matrix ?? this.env.create_dom_matrix();
       matrix = matrix.rotate(tile_rotate); // degrees
     }
 
