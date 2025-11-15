@@ -19,6 +19,7 @@ import type {
   MaskSource,
   SpriteSheetLoadTextureOptions,
   Camera2D,
+  DrawNineSliceTextureOptions,
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -317,14 +318,13 @@ export class Karlib implements Disposable {
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
-    const texture_dpr_scale = texture.get_dpr_scale();
+    const dpr_scale = texture.get_dpr_scale();
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     const ctx = this.context2d;
 
     ctx.save();
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
-
-    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     ctx.imageSmoothingEnabled = smooth_texture;
 
     const pattern = this.texture_util.get_canvas_pattern(texture);
@@ -335,8 +335,9 @@ export class Karlib implements Disposable {
 
     let matrix: DOMMatrix = this.env.create_dom_matrix();
 
-    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / texture_dpr_scale;
-    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / texture_dpr_scale;
+    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
+    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;
+
     matrix = matrix.scale(sx, sy);
 
     if (tile_position_x !== 0 || tile_position_y !== 0) {
@@ -353,6 +354,116 @@ export class Karlib implements Disposable {
 
     ctx.fillStyle = pattern;
     ctx.fillRect(0, 0, width, height);
+
+    ctx.restore();
+  }
+
+  draw_nine_slice_texture(options: DrawNineSliceTextureOptions): void {
+    const {
+      texture: texture_opt,
+      x = 0, y = 0, width, height,
+      alpha = 1,
+      left_width = 0, right_width = 0, top_height = 0, bottom_height = 0,
+    } = options;
+
+    const texture = typeof texture_opt === "string"
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
+
+    const image = texture.get_src();
+    const dpr_scale = texture.get_dpr_scale();
+    const texture_width = texture.get_width();
+    const texture_height = texture.get_height();
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
+
+    const ctx = this.context2d;
+
+    ctx.save();
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+    ctx.translate(x, y);
+    ctx.imageSmoothingEnabled = smooth_texture;
+
+    // Source width/height for the center slice (Original texture size minus the corners/edges)
+    const source_center_width = texture_width - left_width - right_width;
+    const source_center_height = texture_height - top_height - bottom_height;
+
+    // Destination width/height for the center slice (Total destination size minus the corners/edges)
+    const dest_center_width = width - left_width;
+    const dest_center_height = height - top_height;
+
+    // Check if the source or destination centers are invalid
+    if (source_center_width < 0 || source_center_height < 0 || dest_center_width < left_width || dest_center_height < top_height) {
+      ctx.restore();
+      return;
+    }
+
+    // --- Draw all 9 slices ---
+    // A helper for drawing a slice (Source x, y, w, h -> Dest x, y, w, h)
+    const draw_slice = (sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
+      if (sw > 0 && sh > 0 && dw > 0 && dh > 0) {
+        const native_sx = sx * dpr_scale;
+        const native_sy = sy * dpr_scale;
+        const native_sw = sw * dpr_scale;
+        const native_sh = sh * dpr_scale;
+
+        ctx.drawImage(
+          image,
+          native_sx, native_sy, native_sw, native_sh,
+          dx, dy, dw, dh
+        );
+      }
+    };
+
+    // 1. Top-Left Corner
+    draw_slice(0, 0, left_width, top_height, 0, 0, left_width, top_height);
+
+    // 2. Top Edge
+    draw_slice(
+      left_width, 0, source_center_width, top_height,
+      left_width, 0, dest_center_width - left_width, top_height
+    );
+
+    // 3. Top-Right Corner
+    draw_slice(
+      texture_width - right_width, 0, right_width, top_height,
+      width - right_width, 0, right_width, top_height
+    );
+
+    // 4. Left Edge
+    draw_slice(
+      0, top_height, left_width, source_center_height,
+      0, top_height, left_width, dest_center_height - top_height
+    );
+
+    // 5. Center
+    draw_slice(
+      left_width, top_height, source_center_width, source_center_height,
+      left_width, top_height, dest_center_width - left_width, dest_center_height - top_height
+    );
+
+    // 6. Right Edge
+    draw_slice(
+      texture_width - right_width, top_height, right_width, source_center_height,
+      width - right_width, top_height, right_width, dest_center_height - top_height
+    );
+
+    // 7. Bottom-Left Corner
+    draw_slice(
+      0, texture_height - bottom_height, left_width, bottom_height,
+      0, height - bottom_height, left_width, bottom_height
+    );
+
+    // 8. Bottom Edge
+    draw_slice(
+      left_width, texture_height - bottom_height, source_center_width, bottom_height,
+      left_width, height - bottom_height, dest_center_width - left_width, bottom_height
+    );
+
+    // 9. Bottom-Right Corner
+    draw_slice(
+      texture_width - right_width, texture_height - bottom_height, right_width, bottom_height,
+      width - right_width, height - bottom_height, right_width, bottom_height
+    );
 
     ctx.restore();
   }
