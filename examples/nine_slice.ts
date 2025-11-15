@@ -16,7 +16,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   let height = 100;
 
   const ticker = new BrowserTicker();
-  ticker.on_tick(ticker_data => {
+  ticker.on_tick(({ delta_time }) => {
     kl.clear_background("#000");
 
     kl.draw_nine_slice_texture({
@@ -31,8 +31,8 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
       bottom_height: 15,
     });
 
-    width += ticker_data.delta_time * direction;
-    height += ticker_data.delta_time * direction;
+    width += delta_time * direction;
+    height += delta_time * direction;
     if (width > 400 || width < 100) {
       direction *= -1;
     } else if (height > 300 || height < 100) {
