@@ -9,7 +9,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     env: new BrowserEnv(),
   });
 
-  await kl.load_texture('./button_square_flat.png');
+  await kl.load_texture("./button_square_flat.png");
 
   let direction = 1;
   let width = 100;
