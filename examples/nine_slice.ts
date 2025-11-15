@@ -21,14 +21,15 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
     kl.draw_nine_slice_texture({
       texture: "button_square_flat",
-      x: 10,
-      y: 10,
-      width: width | 0, // no decimal
-      height: height | 0, // no decimal
+      x: 200,
+      y: 200,
+      width: width,
+      height: height,
       left_width: 15,
       right_width: 15,
       top_height: 15,
       bottom_height: 15,
+      // pivot: { x: 0.5, y: 0.5 }
     });
 
     width += delta_time * direction;

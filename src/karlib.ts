@@ -400,6 +400,7 @@ export class Karlib implements Disposable {
       alpha = 1,
       width, height,
       left_width, right_width, top_height, bottom_height,
+      pivot = { x: 0, y: 0 },
     } = options;
 
     const texture = typeof texture_opt === "string"
@@ -413,10 +414,13 @@ export class Karlib implements Disposable {
     const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
 
     const ctx = this.context2d;
+    const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * width : pivot.x;
+    const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * height : pivot.y;
 
     ctx.save();
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
+    ctx.translate(-pivot_x | 0, -pivot_y | 0);
     ctx.imageSmoothingEnabled = smooth_texture;
 
     // Source width/height for the center slice (Original texture size minus the corners/edges)
@@ -444,8 +448,8 @@ export class Karlib implements Disposable {
 
         ctx.drawImage(
           image,
-          native_sx, native_sy, native_sw, native_sh,
-          dx, dy, dw, dh
+          native_sx | 0, native_sy | 0, native_sw | 0, native_sh | 0,
+          dx | 0, dy | 0, dw | 0, dh | 0
         );
       }
     };

@@ -130,6 +130,7 @@ export interface DrawNineSliceTextureOptions {
   readonly width: number;
   readonly height: number;
   readonly alpha?: number;
+  readonly pivot?: Point;
 }
 
 // shallow mutable
