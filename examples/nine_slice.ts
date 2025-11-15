@@ -20,7 +20,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     kl.clear_background("#000");
 
     kl.draw_nine_slice_texture({
-      texture: 'button_square_flat',
+      texture: "button_square_flat",
       x: 10,
       y: 10,
       width: width | 0, // no decimal
