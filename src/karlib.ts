@@ -109,6 +109,9 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a line
+   */
   draw_line(options: DrawLineOptions): void {
     const { start, end, fill_style, thickness = 1, line_cap: lineCap = "butt" } = options;
 
@@ -126,6 +129,9 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a rectangle shape
+   */
   draw_rectangle(options: DrawRectangleOptions): void {
     const {
       width, height,
@@ -196,6 +202,9 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a circle shape
+   */
   draw_circle(options: DrawCircleOptions): void {
     const {
       radius,
@@ -246,6 +255,9 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a texture
+   */
   draw_texture(options: DrawTextureOptions): void {
     const {
       texture: texture_opt,
@@ -306,6 +318,9 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a repeating texture across a given area. The texture can be scrolled, scaled, and rotated independently
+   */
   draw_texture_tile(options: DrawTextureTileOptions): void {
     const {
       texture: texture_opt,
