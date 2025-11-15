@@ -358,6 +358,26 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Allows you to stretch a texture using 9-slice scaling.
+   * The corners will remain unscaled (useful for buttons with rounded corners for example)
+   * and the other areas will be scaled horizontally and or vertically
+   *      A                          B
+   *   +---+----------------------+---+
+   * C | 1 |          2           | 3 |
+   *   +---+----------------------+---+
+   *   |   |                      |   |
+   *   | 4 |          5           | 6 |
+   *   |   |                      |   |
+   *   +---+----------------------+---+
+   * D | 7 |          8           | 9 |
+   *   +---+----------------------+---+
+   * When changing this objects width and/or height:
+   *    areas 1 3 7 and 9 will remain unscaled.
+   *    areas 2 and 8 will be stretched horizontally
+   *    areas 4 and 6 will be stretched vertically
+   *    area 5 will be stretched both horizontally and vertically
+   */
   draw_nine_slice_texture(options: DrawNineSliceTextureOptions): void {
     const {
       texture: texture_opt,
