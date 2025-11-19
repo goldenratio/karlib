@@ -107,11 +107,10 @@ export class Karlib implements Disposable {
    * Sets background color
    */
   clear_background(color: string = "#000"): void {
+    // blended is expect to be set to default (source-over), before context is saved
+    this.set_blend_mode("source-over");
     const ctx = this.context2d;
     ctx.save();
-
-    this.set_blend_mode("source-over");
-
     if (!this.transparent_background) {
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
