@@ -13,6 +13,7 @@ import type { BehaviorConfigOf, EmitterConfig } from "./types.js";
  * https://github.com/pixijs-userland/particle-emitter
  */
 export class ParticleEmitter implements Disposable {
+  private readonly kl: Karlib;
   private readonly pos: Mutable<Point>;
   private readonly particles_pool_bag: PoolBag<Particle>;
   private readonly particles: Particle[] = [];
@@ -22,6 +23,7 @@ export class ParticleEmitter implements Disposable {
   private readonly is_infinite: boolean;
   private readonly frequency: number;
   private readonly emitter_life: number;
+  private readonly blend_mode: GlobalCompositeOperation | undefined = undefined;
 
   private readonly spawn_burst_config?: BehaviorConfigOf<"spawnBurst">;
   private readonly spawn_shape_config?: BehaviorConfigOf<"spawnShape">;
@@ -33,6 +35,7 @@ export class ParticleEmitter implements Disposable {
   private completed: boolean = false;
 
   constructor(kl: Karlib, config: EmitterConfig) {
+    this.kl = kl;
     this.spawn_timer = 0;
 
     this.particles_per_wave = config.particles_per_wave ?? 1;
@@ -47,6 +50,7 @@ export class ParticleEmitter implements Disposable {
     this.emitter_age = 0;
     this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config.emitter_lifetime ?? 1);
     this.emit = config.emit ?? true;
+    this.blend_mode = config.blend_mode;
 
     // --- detect & cache spawnBurst config ---
     this.spawn_burst_config = config.behaviors.find(b => b.type === "spawnBurst")?.config;
@@ -148,6 +152,10 @@ export class ParticleEmitter implements Disposable {
   draw(): void {
     if (this.completed) {
       return;
+    }
+
+    if (typeof this.blend_mode !== "undefined") {
+      this.kl.set_blend_mode(this.blend_mode);
     }
 
     for (let i = this.particles.length - 1; i >= 0; i--) {

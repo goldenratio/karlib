@@ -95,11 +95,23 @@ export class Karlib implements Disposable {
   }
 
   /**
+   * Set canvas global blend mode
+   */
+  set_blend_mode(value: GlobalCompositeOperation): void {
+    this.context2d.globalCompositeOperation = value;
+  }
+
+  /**
    * Sets background color
    */
   clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
+
+    if (this.context2d.globalCompositeOperation !== "source-over") {
+      this.set_blend_mode("source-over");
+    }
+
     if (!this.transparent_background) {
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);

@@ -212,6 +212,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   };
 
   const config_3: EmitterConfig = {
+    "blend_mode": "lighter",
     "lifetime": {
       "min": 0.5,
       "max": 0.5
@@ -675,6 +676,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   emitter.set_on_animation_complete(() => {
     console.log("emitter animation complete!");
   });
+
   ticker.on_tick(ticker_data => {
     kl.clear_background("#000");
 
