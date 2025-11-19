@@ -110,9 +110,7 @@ export class Karlib implements Disposable {
     const ctx = this.context2d;
     ctx.save();
 
-    if (this.context2d.globalCompositeOperation !== "source-over") {
-      this.set_blend_mode("source-over");
-    }
+    this.set_blend_mode("source-over");
 
     if (!this.transparent_background) {
       ctx.fillStyle = color;
