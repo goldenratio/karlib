@@ -98,7 +98,9 @@ export class Karlib implements Disposable {
    * Set canvas global blend mode
    */
   set_blend_mode(value: GlobalCompositeOperation): void {
-    this.context2d.globalCompositeOperation = value;
+    if (this.context2d.globalCompositeOperation !== value) {
+      this.context2d.globalCompositeOperation = value;
+    }
   }
 
   /**
