@@ -95,22 +95,13 @@ export class Karlib implements Disposable {
   }
 
   /**
-   * Set canvas global blend mode
-   */
-  set_blend_mode(value: GlobalCompositeOperation): void {
-    if (this.context2d.globalCompositeOperation !== value) {
-      this.context2d.globalCompositeOperation = value;
-    }
-  }
-
-  /**
    * Sets background color
    */
   clear_background(color: string = "#000"): void {
-    // blended is expect to be set to default (source-over), before context is saved
-    this.set_blend_mode("source-over");
     const ctx = this.context2d;
     ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+
     if (!this.transparent_background) {
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
@@ -124,10 +115,18 @@ export class Karlib implements Disposable {
    * Render a line
    */
   draw_line(options: DrawLineOptions): void {
-    const { start, end, fill_style, thickness = 1, line_cap: lineCap = "butt" } = options;
+    const {
+      start, end, fill_style, thickness = 1,
+      line_cap: lineCap = "butt",
+      blend_mode, alpha = 1
+    } = options;
 
     const ctx = this.context2d;
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     ctx.beginPath();
     ctx.moveTo(start.x, start.y);
@@ -149,7 +148,7 @@ export class Karlib implements Disposable {
       x = 0, y = 0, fill_style = "#ff0000",
       outline_size = 0, outline_style = "#ffffff", outline_cap = "butt",
       rotate = 0, pivot = { x: 0, y: 0 },
-      scale = 1, alpha = 1,
+      scale = 1, alpha = 1, blend_mode
     } = options;
 
     const ctx = this.context2d;
@@ -169,6 +168,9 @@ export class Karlib implements Disposable {
 
     if (noRotation) {
       ctx.save();
+      if (blend_mode) {
+        ctx.globalCompositeOperation = blend_mode;
+      }
       ctx.globalAlpha = ctx.globalAlpha * alpha;
 
       ctx.fillStyle = fill_style;
@@ -189,6 +191,9 @@ export class Karlib implements Disposable {
 
     // General path: translate to world pivot, rotate, then draw rect offset by -pivot
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     ctx.translate(x + pivot_x, y + pivot_y);
@@ -222,7 +227,7 @@ export class Karlib implements Disposable {
       x = 0, y = 0, fill_style = "#ff0000",
       outline_size = 0, outline_style = "#ffffff",
       pivot = { x: 0, y: 0 },
-      scale = 1, alpha = 1,
+      scale = 1, alpha = 1, blend_mode
     } = options;
 
     const ctx = this.context2d;
@@ -247,6 +252,9 @@ export class Karlib implements Disposable {
     }
 
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     if (sx !== 1 || sy !== 1) {
@@ -275,7 +283,7 @@ export class Karlib implements Disposable {
       x = 0, y = 0, rotate = 0, width, height,
       pivot = { x: 0, y: 0 }, scale = 1, alpha = 1,
       tint_color, tint_alpha = 1,
-      source_rect,
+      source_rect, blend_mode
     } = options;
 
     const texture = typeof texture_opt === "string"
@@ -300,6 +308,9 @@ export class Karlib implements Disposable {
     }
 
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
 
@@ -338,26 +349,29 @@ export class Karlib implements Disposable {
       x = 0, y = 0, width, height,
       tile_position_x = 0, tile_position_y = 0,
       tile_scale = 1, tile_rotate = 0, tile_alpha = 1,
+      blend_mode
     } = options;
 
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
+    const pattern = this.texture_util.get_canvas_pattern(texture);
+    if (!pattern) {
+      return;
+    }
+
     const dpr_scale = texture.get_dpr_scale();
     const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     const ctx = this.context2d;
 
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
     ctx.imageSmoothingEnabled = smooth_texture;
-
-    const pattern = this.texture_util.get_canvas_pattern(texture);
-    if (!pattern) {
-      ctx.restore();
-      return;
-    }
 
     let matrix: DOMMatrix = this.env.create_dom_matrix();
 
@@ -411,7 +425,7 @@ export class Karlib implements Disposable {
       alpha = 1,
       width, height,
       left_width, right_width, top_height, bottom_height,
-      pivot = { x: 0, y: 0 },
+      pivot = { x: 0, y: 0 }, blend_mode
     } = options;
 
     const texture = typeof texture_opt === "string"
@@ -442,6 +456,9 @@ export class Karlib implements Disposable {
 
     const ctx = this.context2d;
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
     ctx.translate(-pivot_x | 0, -pivot_y | 0);

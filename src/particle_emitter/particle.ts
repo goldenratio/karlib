@@ -161,6 +161,14 @@ export class Particle implements Disposable {
     this.rot_static_cfg = config.behaviors.find(b => b.type === "rotationStatic")?.config;
     this.rot_cfg = config.behaviors.find(b => b.type === "rotation")?.config;
     this.accel_cfg = config.behaviors.find(b => b.type === "moveAcceleration")?.config;
+
+    if (this.static_draw_texture_options) {
+      this.static_draw_texture_options.blend_mode = config.blend_mode;
+    }
+
+    if (this.animated_draw_texture_options) {
+      this.animated_draw_texture_options.blend_mode = config.blend_mode;
+    }
     this.reset();
   }
 

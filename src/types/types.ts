@@ -50,6 +50,8 @@ export interface DrawLineOptions {
    * @default "butt"
    */
   readonly line_cap?: CanvasLineCap;
+  readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawRectangleOptions {
@@ -71,6 +73,7 @@ export interface DrawRectangleOptions {
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawCircleOptions {
@@ -83,6 +86,7 @@ export interface DrawCircleOptions {
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawTextureOptions {
@@ -101,6 +105,7 @@ export interface DrawTextureOptions {
   readonly tint_color?: string;
   readonly tint_alpha?: number;
   readonly source_rect?: Rectangle;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawTextureTileOptions {
@@ -117,6 +122,7 @@ export interface DrawTextureTileOptions {
   readonly tile_rotate?: number;
   readonly tile_scale?: number | Point;
   readonly tile_alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawNineSliceTextureOptions {
@@ -131,6 +137,7 @@ export interface DrawNineSliceTextureOptions {
   readonly height: number;
   readonly alpha?: number;
   readonly pivot?: Point;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 // shallow mutable

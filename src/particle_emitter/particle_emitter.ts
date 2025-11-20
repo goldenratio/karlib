@@ -154,10 +154,6 @@ export class ParticleEmitter implements Disposable {
       return;
     }
 
-    if (typeof this.blend_mode !== "undefined") {
-      this.kl.set_blend_mode(this.blend_mode);
-    }
-
     for (let i = this.particles.length - 1; i >= 0; i--) {
       this.particles[i].draw();
     }
