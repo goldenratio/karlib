@@ -100,7 +100,6 @@ export class Karlib implements Disposable {
   clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
-    ctx.globalCompositeOperation = "source-over";
 
     if (!this.transparent_background) {
       ctx.fillStyle = color;
