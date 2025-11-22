@@ -43,6 +43,9 @@ export function angle_between_two_points(p1: Point, p2: Point): number {
   return Math.atan2(dy, dx);
 }
 
+/**
+ * Creates a vector (Point) from an angle and radius.
+ */
 export function vec_from_angle(radians: number, radius: number = 1): Point {
   return {
     x: Math.cos(radians) * radius,
