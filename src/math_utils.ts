@@ -26,31 +26,18 @@ export function random_item_from_array<T = unknown>(src: readonly T[]): T | unde
   return src[idx] ?? undefined;
 }
 
+/**
+ * Convert degree to radians
+ */
 export function to_radians(degree: number): number {
   return (degree * Math.PI) / 180;
 }
 
+/**
+ * Convert radians to degrees
+ */
 export function to_degrees(radians: number): number {
   return radians * (180 / Math.PI);
-}
-
-/**
- * @returns value in radians
- */
-export function angle_between_two_points(p1: Point, p2: Point): number {
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
-  return Math.atan2(dy, dx);
-}
-
-/**
- * Creates a vector (Point) from an angle and radius.
- */
-export function vec_from_angle(radians: number, radius: number = 1): Point {
-  return {
-    x: Math.cos(radians) * radius,
-    y: Math.sin(radians) * radius,
-  };
 }
 
 /**
@@ -64,6 +51,8 @@ export function normalize_angle(degree: number): number {
 }
 
 /**
+ * Returns the smallest difference between two angles, measured in degrees.
+ * The result is always in the range [0, 180].
  * @param angle1_degree in degree
  * @param angle2_degree in degree
  * @returns in degree
@@ -73,11 +62,19 @@ export function get_angle_difference(angle1_degree: number, angle2_degree: numbe
   return Math.min(diff, 360 - diff);
 }
 
+/**
+ * Restricts a value to lie within the inclusive range [min, max].
+ * Automatically swaps bounds if min > max.
+ */
 export function clamp(value: number, min: number, max: number): number {
   if (min > max) [min, max] = [max, min]; // tolerate swapped bounds
   return value < min ? min : value > max ? max : value;
 }
 
+/**
+ * Maps a number from one range to another, preserving its relative position.
+ * The result is clamped to the source range before mapping.
+ */
 export function map_range(
   value: number,
   range1: number,
@@ -111,17 +108,10 @@ export function lerp(value0: number, value1: number, time: number): number {
   return value0 + (value1 - value0) * time;
 }
 
-export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boolean {
-  /*return (Math.abs(target1.x - target2.x) * 2 < (target1.width + target2.width)) &&
-      (Math.abs(target1.y - target2.y) * 2 < (target1.height + target2.height));
-   */
-  return !((target2.x > (target1.x + target1.width)) ||
-    ((target2.x + target2.width) < target1.x) ||
-    (target2.y > (target1.y + target1.height)) ||
-    ((target2.y + target2.height) < target1.y)
-  );
-}
-
+/**
+ * Computes the smallest power of two greater than or equal to the given number.
+ * Returns 1 for an input of 0.
+ */
 export function next_pow2(v: number): number {
   v += v === 0 ? 1 : 0;
   --v;
@@ -134,10 +124,50 @@ export function next_pow2(v: number): number {
   return v + 1;
 }
 
+/**
+ * Checks whether a given number is a power of two.
+ */
 export function is_pow2(v: number): boolean {
   return !(v & (v - 1)) && (!!v);
 }
 
+// ---- Geometry utils ----
+
+/**
+ * Tells if 2 Rectangles are colliding
+ */
+export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boolean {
+  return !((target2.x > (target1.x + target1.width)) ||
+    ((target2.x + target2.width) < target1.x) ||
+    (target2.y > (target1.y + target1.height)) ||
+    ((target2.y + target2.height) < target1.y)
+  );
+}
+
+
+/**
+ * Find angle between 2 points
+ * @returns value in radians
+ */
+export function angle_between_two_points(p1: Point, p2: Point): number {
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  return Math.atan2(dy, dx);
+}
+
+/**
+ * Creates a vector (Point) from an angle and radius.
+ */
+export function vec_from_angle(radians: number, radius: number = 1): Point {
+  return {
+    x: Math.cos(radians) * radius,
+    y: Math.sin(radians) * radius,
+  };
+}
+
+/**
+ * Distance between 2 points
+ */
 export function distance_between_two_points(p1: Point, p2: Point): number {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
