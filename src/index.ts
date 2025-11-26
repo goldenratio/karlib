@@ -1,7 +1,6 @@
 export * from "./constants.js";
 export * from "./types/index.js";
 export * from "./math_utils.js";
-export * from "./vector.js";
 export * from "./assert_utils.js";
 export * from "./texture.js";
 export * from "./dispose_bag.js";
