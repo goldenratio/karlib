@@ -35,6 +35,9 @@ async function main(): Promise<void> {
   Object.assign(document.body.style, <CSSStyleDeclaration>{
     backgroundColor: "#6d8891",
     margin: "0",
+    fontFamily: "Roboto, Helvetica, 'Helvetica Neue', Verdana, Arial, serif",
+    fontSize: "16px",
+    color: "#000",
     height: "100vh",
     overflow: "hidden",
   });

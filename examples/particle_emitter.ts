@@ -721,4 +721,11 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     }
   });
 
+  // append help
+  const help_text = document.createElement("p");
+  help_text.style.textAlign = "center";
+  help_text.innerText = "Use right/left arrow keys to toggle between particle examples!";
+
+  document.body.appendChild(help_text);
+
 }
