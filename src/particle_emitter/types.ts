@@ -43,6 +43,11 @@ export interface EmitterConfig {
    * The list of behaviors to apply to this emitter.
    */
   readonly behaviors: readonly BehaviorEntryType[];
+
+  /**
+   * Applied before drawing particles
+   */
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface EmitterConfigValue<TValue> {

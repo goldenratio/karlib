@@ -19,6 +19,7 @@ import type {
   MaskSource,
   SpriteSheetLoadTextureOptions,
   Camera2D,
+  DrawNineSliceTextureOptions,
 } from "./types/index.js";
 
 export class Karlib implements Disposable {
@@ -99,6 +100,7 @@ export class Karlib implements Disposable {
   clear_background(color: string = "#000"): void {
     const ctx = this.context2d;
     ctx.save();
+
     if (!this.transparent_background) {
       ctx.fillStyle = color;
       ctx.fillRect(0, 0, this.canvas_size.width, this.canvas_size.height);
@@ -108,11 +110,22 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a line
+   */
   draw_line(options: DrawLineOptions): void {
-    const { start, end, fill_style, thickness = 1, line_cap: lineCap = "butt" } = options;
+    const {
+      start, end, fill_style, thickness = 1,
+      line_cap: lineCap = "butt",
+      blend_mode, alpha = 1
+    } = options;
 
     const ctx = this.context2d;
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     ctx.beginPath();
     ctx.moveTo(start.x, start.y);
@@ -125,13 +138,16 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a rectangle shape
+   */
   draw_rectangle(options: DrawRectangleOptions): void {
     const {
       width, height,
       x = 0, y = 0, fill_style = "#ff0000",
       outline_size = 0, outline_style = "#ffffff", outline_cap = "butt",
       rotate = 0, pivot = { x: 0, y: 0 },
-      scale = 1, alpha = 1,
+      scale = 1, alpha = 1, blend_mode
     } = options;
 
     const ctx = this.context2d;
@@ -151,6 +167,9 @@ export class Karlib implements Disposable {
 
     if (noRotation) {
       ctx.save();
+      if (blend_mode) {
+        ctx.globalCompositeOperation = blend_mode;
+      }
       ctx.globalAlpha = ctx.globalAlpha * alpha;
 
       ctx.fillStyle = fill_style;
@@ -171,6 +190,9 @@ export class Karlib implements Disposable {
 
     // General path: translate to world pivot, rotate, then draw rect offset by -pivot
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     ctx.translate(x + pivot_x, y + pivot_y);
@@ -195,13 +217,16 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a circle shape
+   */
   draw_circle(options: DrawCircleOptions): void {
     const {
       radius,
       x = 0, y = 0, fill_style = "#ff0000",
       outline_size = 0, outline_style = "#ffffff",
       pivot = { x: 0, y: 0 },
-      scale = 1, alpha = 1,
+      scale = 1, alpha = 1, blend_mode
     } = options;
 
     const ctx = this.context2d;
@@ -226,6 +251,9 @@ export class Karlib implements Disposable {
     }
 
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
 
     if (sx !== 1 || sy !== 1) {
@@ -245,13 +273,16 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a texture
+   */
   draw_texture(options: DrawTextureOptions): void {
     const {
       texture: texture_opt,
       x = 0, y = 0, rotate = 0, width, height,
       pivot = { x: 0, y: 0 }, scale = 1, alpha = 1,
       tint_color, tint_alpha = 1,
-      source_rect,
+      source_rect, blend_mode
     } = options;
 
     const texture = typeof texture_opt === "string"
@@ -276,6 +307,9 @@ export class Karlib implements Disposable {
     }
 
     ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
     ctx.globalAlpha = ctx.globalAlpha * alpha;
     ctx.translate(x, y);
 
@@ -305,49 +339,51 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  /**
+   * Render a repeating texture across a given area. The texture can be scrolled, scaled, and rotated independently
+   */
   draw_texture_tile(options: DrawTextureTileOptions): void {
     const {
       texture: texture_opt,
       x = 0, y = 0, width, height,
       tile_position_x = 0, tile_position_y = 0,
-      tile_scale, tile_rotate = 0, tile_alpha = 1,
+      tile_scale = 1, tile_rotate = 0, tile_alpha = 1,
+      blend_mode
     } = options;
 
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
 
-    const ctx = this.context2d;
-
-    ctx.save();
-    ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
-    ctx.translate(x, y);
-
-    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
-    ctx.imageSmoothingEnabled = smooth_texture;
-
     const pattern = this.texture_util.get_canvas_pattern(texture);
     if (!pattern) {
-      ctx.restore();
       return;
     }
 
-    let matrix: DOMMatrix | undefined = undefined;
+    const dpr_scale = texture.get_dpr_scale();
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
+    const ctx = this.context2d;
 
-    if (typeof tile_scale !== "undefined") {
-      const sx = typeof tile_scale === "number" ? tile_scale : tile_scale.x;
-      const sy = typeof tile_scale === "number" ? tile_scale : tile_scale.y;
-      matrix = matrix ?? this.env.create_dom_matrix();
-      matrix = matrix.scale(sx, sy);
+    ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
     }
+    ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
+    ctx.translate(x, y);
+    ctx.imageSmoothingEnabled = smooth_texture;
+
+    let matrix: DOMMatrix = this.env.create_dom_matrix();
+
+    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
+    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;
+
+    matrix = matrix.scale(sx, sy);
 
     if (tile_position_x !== 0 || tile_position_y !== 0) {
-      matrix = matrix ?? this.env.create_dom_matrix();
       matrix = matrix.translate(tile_position_x, tile_position_y);
     }
 
     if (tile_rotate !== 0) {
-      matrix = matrix ?? this.env.create_dom_matrix();
       matrix = matrix.rotate(tile_rotate); // degrees
     }
 
@@ -357,6 +393,143 @@ export class Karlib implements Disposable {
 
     ctx.fillStyle = pattern;
     ctx.fillRect(0, 0, width, height);
+
+    ctx.restore();
+  }
+
+  /**
+   * Allows you to stretch a texture using 9-slice scaling.
+   * The corners will remain unscaled (useful for buttons with rounded corners for example)
+   * and the other areas will be scaled horizontally and or vertically
+   *      A                          B
+   *   +---+----------------------+---+
+   * C | 1 |          2           | 3 |
+   *   +---+----------------------+---+
+   *   |   |                      |   |
+   *   | 4 |          5           | 6 |
+   *   |   |                      |   |
+   *   +---+----------------------+---+
+   * D | 7 |          8           | 9 |
+   *   +---+----------------------+---+
+   * When changing this objects width and/or height:
+   *    areas 1 3 7 and 9 will remain unscaled.
+   *    areas 2 and 8 will be stretched horizontally
+   *    areas 4 and 6 will be stretched vertically
+   *    area 5 will be stretched both horizontally and vertically
+   */
+  draw_nine_slice_texture(options: DrawNineSliceTextureOptions): void {
+    const {
+      texture: texture_opt,
+      x = 0, y = 0,
+      alpha = 1,
+      width, height,
+      left_width, right_width, top_height, bottom_height,
+      pivot = { x: 0, y: 0 }, blend_mode
+    } = options;
+
+    const texture = typeof texture_opt === "string"
+      ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
+      : texture_opt;
+
+    const image = texture.get_src();
+    const dpr_scale = texture.get_dpr_scale();
+    const texture_width = texture.get_width();
+    const texture_height = texture.get_height();
+    const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
+
+    const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * width : pivot.x;
+    const pivot_y = (pivot.y >= 0 && pivot.y <= 1) ? pivot.y * height : pivot.y;
+
+    // Source width/height for the center slice (Original texture size minus the corners/edges)
+    const source_center_width = texture_width - left_width - right_width;
+    const source_center_height = texture_height - top_height - bottom_height;
+
+    // Destination width/height for the center slice (Total destination size minus the corners/edges)
+    const dest_center_width = width - left_width;
+    const dest_center_height = height - top_height;
+
+    // Check if the source or destination centers are invalid
+    if (source_center_width < 0 || source_center_height < 0 || dest_center_width < left_width || dest_center_height < top_height) {
+      return;
+    }
+
+    const ctx = this.context2d;
+    ctx.save();
+    if (blend_mode) {
+      ctx.globalCompositeOperation = blend_mode;
+    }
+    ctx.globalAlpha = ctx.globalAlpha * alpha;
+    ctx.translate(x, y);
+    ctx.translate(-pivot_x | 0, -pivot_y | 0);
+    ctx.imageSmoothingEnabled = smooth_texture;
+
+    // --- Draw all 9 slices ---
+    // A helper for drawing a slice (Source x, y, w, h -> Dest x, y, w, h)
+    const draw_slice = (sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
+      if (sw > 0 && sh > 0 && dw > 0 && dh > 0) {
+        const native_sx = sx * dpr_scale;
+        const native_sy = sy * dpr_scale;
+        const native_sw = sw * dpr_scale;
+        const native_sh = sh * dpr_scale;
+
+        ctx.drawImage(
+          image,
+          native_sx | 0, native_sy | 0, native_sw | 0, native_sh | 0,
+          dx | 0, dy | 0, dw | 0, dh | 0
+        );
+      }
+    };
+
+    // 1. Top-Left Corner
+    draw_slice(0, 0, left_width, top_height, 0, 0, left_width, top_height);
+
+    // 2. Top Edge
+    draw_slice(
+      left_width, 0, source_center_width, top_height,
+      left_width, 0, dest_center_width - left_width, top_height
+    );
+
+    // 3. Top-Right Corner
+    draw_slice(
+      texture_width - right_width, 0, right_width, top_height,
+      width - right_width, 0, right_width, top_height
+    );
+
+    // 4. Left Edge
+    draw_slice(
+      0, top_height, left_width, source_center_height,
+      0, top_height, left_width, dest_center_height - top_height
+    );
+
+    // 5. Center
+    draw_slice(
+      left_width, top_height, source_center_width, source_center_height,
+      left_width, top_height, dest_center_width - left_width, dest_center_height - top_height
+    );
+
+    // 6. Right Edge
+    draw_slice(
+      texture_width - right_width, top_height, right_width, source_center_height,
+      width - right_width, top_height, right_width, dest_center_height - top_height
+    );
+
+    // 7. Bottom-Left Corner
+    draw_slice(
+      0, texture_height - bottom_height, left_width, bottom_height,
+      0, height - bottom_height, left_width, bottom_height
+    );
+
+    // 8. Bottom Edge
+    draw_slice(
+      left_width, texture_height - bottom_height, source_center_width, bottom_height,
+      left_width, height - bottom_height, dest_center_width - left_width, bottom_height
+    );
+
+    // 9. Bottom-Right Corner
+    draw_slice(
+      texture_width - right_width, texture_height - bottom_height, right_width, bottom_height,
+      width - right_width, height - bottom_height, right_width, bottom_height
+    );
 
     ctx.restore();
   }

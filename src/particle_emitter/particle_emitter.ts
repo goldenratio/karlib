@@ -22,6 +22,7 @@ export class ParticleEmitter implements Disposable {
   private readonly is_infinite: boolean;
   private readonly frequency: number;
   private readonly emitter_life: number;
+  private readonly blend_mode: GlobalCompositeOperation | undefined = undefined;
 
   private readonly spawn_burst_config?: BehaviorConfigOf<"spawnBurst">;
   private readonly spawn_shape_config?: BehaviorConfigOf<"spawnShape">;
@@ -47,6 +48,7 @@ export class ParticleEmitter implements Disposable {
     this.emitter_age = 0;
     this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config.emitter_lifetime ?? 1);
     this.emit = config.emit ?? true;
+    this.blend_mode = config.blend_mode;
 
     // --- detect & cache spawnBurst config ---
     this.spawn_burst_config = config.behaviors.find(b => b.type === "spawnBurst")?.config;

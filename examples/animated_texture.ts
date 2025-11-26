@@ -3,7 +3,6 @@ import { AnimatedTexture, BrowserEnv, BrowserTicker, Karlib } from "../src";
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
 
-// Loading texture based on device pixel ratio (dpr)
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   const kl = new Karlib({

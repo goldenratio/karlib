@@ -3,9 +3,6 @@
 > A minimal HTML5 canvas rendering library. Fine tuned for web games development.
 
 
-> [!WARNING]
-> This library is in alpha state
-
 ### API Docs
 
 https://goldenratio.github.io/karlib/

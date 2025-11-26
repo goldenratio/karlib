@@ -50,6 +50,8 @@ export interface DrawLineOptions {
    * @default "butt"
    */
   readonly line_cap?: CanvasLineCap;
+  readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawRectangleOptions {
@@ -64,11 +66,14 @@ export interface DrawRectangleOptions {
    * @default "butt"
    */
   readonly outline_style?: OutlineStyle;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly rotate?: number;
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawCircleOptions {
@@ -81,6 +86,7 @@ export interface DrawCircleOptions {
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawTextureOptions {
@@ -89,7 +95,9 @@ export interface DrawTextureOptions {
   readonly y?: number;
   readonly width?: number;
   readonly height?: number;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly rotate?: number;
   readonly pivot?: Point;
   readonly scale?: number | Point;
@@ -97,6 +105,7 @@ export interface DrawTextureOptions {
   readonly tint_color?: string;
   readonly tint_alpha?: number;
   readonly source_rect?: Rectangle;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 export interface DrawTextureTileOptions {
@@ -107,10 +116,28 @@ export interface DrawTextureTileOptions {
   readonly height: number;
   readonly tile_position_x?: number;
   readonly tile_position_y?: number;
-  // in degrees
+  /**
+   * in degrees
+   */
   readonly tile_rotate?: number;
   readonly tile_scale?: number | Point;
   readonly tile_alpha?: number;
+  readonly blend_mode?: GlobalCompositeOperation;
+}
+
+export interface DrawNineSliceTextureOptions {
+  readonly texture: Texture | string;
+  readonly x?: number;
+  readonly y?: number;
+  readonly left_width: number;
+  readonly right_width: number;
+  readonly top_height: number;
+  readonly bottom_height: number;
+  readonly width: number;
+  readonly height: number;
+  readonly alpha?: number;
+  readonly pivot?: Point;
+  readonly blend_mode?: GlobalCompositeOperation;
 }
 
 // shallow mutable
@@ -174,6 +201,9 @@ export type MaskSource =
 export interface Camera2D {
   readonly offset: Point,
   readonly target: Point,
+  /**
+   * in degrees
+   */
   readonly rotation: number,
   readonly zoom: number,
 }

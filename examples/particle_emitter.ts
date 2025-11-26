@@ -212,6 +212,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   };
 
   const config_3: EmitterConfig = {
+    "blend_mode": "lighter",
     "lifetime": {
       "min": 0.5,
       "max": 0.5
@@ -671,29 +672,30 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   const configs: EmitterConfig[] = [config_1, config_2, config_3, config_4, config_5, config_6, config_7];
   let current_index = 0;
 
-  let emitter = new ParticleEmitter(kl, configs[current_index]);
+  let emitter: ParticleEmitter | undefined = new ParticleEmitter(kl, configs[current_index]);
   emitter.set_on_animation_complete(() => {
     console.log("emitter animation complete!");
   });
+
   ticker.on_tick(ticker_data => {
     kl.clear_background("#000");
 
-    emitter.update(ticker_data.elapsed_ms);
-    emitter.draw();
+    emitter?.update(ticker_data.elapsed_ms);
+    emitter?.draw();
   });
 
   canvas.addEventListener("pointerdown", (e) => {
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left);
     const y = (e.clientY - rect.top);
-    emitter.update_spawn_pos(x, y);
+    emitter?.update_spawn_pos(x, y);
   });
 
   let emit: boolean = true;
   window.addEventListener("keydown", (e) => {
     if (e.code === "Space") {
       emit = !emit;
-      emitter.set_emit(emit);
+      emitter?.set_emit(emit);
       return;
     }
 
@@ -708,6 +710,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
       // recreate emitter
       if (emitter) {
         emitter.dispose();
+        emitter = undefined;
       }
       emitter = new ParticleEmitter(kl, configs[current_index]);
       emitter.set_on_animation_complete(() => {
@@ -717,5 +720,12 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
       console.log(`Switched to emitter config ${current_index + 1}`);
     }
   });
+
+  // append help
+  const help_text = document.createElement("p");
+  help_text.style.textAlign = "center";
+  help_text.innerText = "Use right/left arrow keys to toggle between particle examples!";
+
+  document.body.appendChild(help_text);
 
 }
