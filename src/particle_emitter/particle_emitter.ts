@@ -13,7 +13,6 @@ import type { BehaviorConfigOf, EmitterConfig } from "./types.js";
  * https://github.com/pixijs-userland/particle-emitter
  */
 export class ParticleEmitter implements Disposable {
-  private readonly kl: Karlib;
   private readonly pos: Mutable<Point>;
   private readonly particles_pool_bag: PoolBag<Particle>;
   private readonly particles: Particle[] = [];
@@ -35,7 +34,6 @@ export class ParticleEmitter implements Disposable {
   private completed: boolean = false;
 
   constructor(kl: Karlib, config: EmitterConfig) {
-    this.kl = kl;
     this.spawn_timer = 0;
 
     this.particles_per_wave = config.particles_per_wave ?? 1;
