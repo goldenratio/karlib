@@ -1,5 +1,6 @@
+import { unwrap } from "@goldenratio/core-utils";
+
 import { Texture } from "./texture.js";
-import { unwrap } from "./assert_utils.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
 import type { LoadTextureOptions, ScaleMode, SpriteSheetData, SpriteSheetLoadTextureOptions } from "./types/index.js";

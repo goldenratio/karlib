@@ -8,10 +8,3 @@ export const SCALE_MODE = {
    */
   Nearest: "nearest",
 } as const;
-
-/**
- * no-operation
- */
-export const NOOP = (): void => {
-  // empty
-};

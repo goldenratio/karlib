@@ -1,10 +1,11 @@
-import type { Disposable } from "../dispose_bag.js";
+import type { Disposable } from "@goldenratio/core-utils";
+import { unwrap } from "@goldenratio/core-utils";
+
 import type { Karlib } from "../karlib.js";
 import type { DrawTextureOptions, Mutable, Point } from "../types/types.js";
 import { clamp, lerp, random_item_from_array, to_degrees, to_radians, vec_from_angle } from "../math_utils.js";
 
 import type { EmitterConfigValue, EmitterConfig, BehaviorConfigOf } from "./types.js";
-import { unwrap } from "../assert_utils.js";
 import { AnimatedTexture, type DrawAnimatedTextureOptions } from "../animated_texture.js";
 
 function hex_to_rgb(hex: string): { r: number, g: number, b: number } {
