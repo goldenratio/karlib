@@ -1,5 +1,6 @@
-import { unwrap } from "./assert_utils.js";
-import type { Disposable } from "./dispose_bag.js";
+import type { Disposable } from "@goldenratio/core-utils";
+import { unwrap } from "@goldenratio/core-utils";
+
 import type { Karlib } from "./karlib.js";
 import type { Texture } from "./texture.js";
 import type { DrawTextureOptions } from "./types/index.js";

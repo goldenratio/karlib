@@ -1,4 +1,5 @@
-import type { Disposable } from "../dispose_bag.js";
+import type { Disposable } from "@goldenratio/core-utils";
+
 import type { Mutable } from "../types/index.js";
 
 export interface TickerData {
