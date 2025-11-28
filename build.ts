@@ -10,6 +10,8 @@ interface BuildOptions {
   readonly minify?: boolean;
 }
 
+const package_name = "karlib";
+
 function bytes_to_kilobytes(bytes: number): number {
   const value = bytes / 1024;
   return Math.round(value * 100) / 100;
@@ -38,7 +40,7 @@ async function main(): Promise<void> {
 async function perform_build(options?: BuildOptions): Promise<void> {
   const { minify = false } = options || {};
   const start_time = Date.now();
-  const target_file_name = minify ? "karlib.min.js" : "karlib.js";
+  const target_file_name = minify ? `${package_name}.min.js` : `${package_name}.js`;
 
   const src_path = path.join("src", "index.ts");
   const dest_path = path.join("target", target_file_name);
