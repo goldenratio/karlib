@@ -1,9 +1,9 @@
 import type { Disposable, Mutable } from "@goldenratio/core-utils";
-import { unwrap } from "@goldenratio/core-utils";
+import { unwrap, clamp, lerp, random_item_from_array, to_degrees, to_radians } from "@goldenratio/core-utils";
 
 import type { Karlib } from "../karlib.js";
 import type { DrawTextureOptions, Point } from "../types/types.js";
-import { clamp, lerp, random_item_from_array, to_degrees, to_radians, vec_from_angle } from "../math_utils.js";
+import { vec_from_angle } from "../math_utils.js";
 
 import type { EmitterConfigValue, EmitterConfig, BehaviorConfigOf } from "./types.js";
 import { AnimatedTexture, type DrawAnimatedTextureOptions } from "../animated_texture.js";

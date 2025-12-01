@@ -36,7 +36,7 @@
   ],
   "homepage": "https://github.com/goldenratio/karlib#readme",
   "devDependencies": {
-    "@goldenratio/core-utils": "0.0.2",
+    "@goldenratio/core-utils": "0.0.3",
     "@types/node": "24.10.1",
     "esbuild": "0.27.0",
     "typedoc": "0.28.15",

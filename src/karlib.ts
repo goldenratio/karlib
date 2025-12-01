@@ -1,9 +1,8 @@
 import type { Disposable } from "@goldenratio/core-utils";
-import { unwrap } from "@goldenratio/core-utils";
+import { unwrap, to_radians } from "@goldenratio/core-utils";
 
 import { SCALE_MODE } from "./constants.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
-import { to_radians } from "./math_utils.js";
 import { Texture } from "./texture.js";
 import {
   generate_textures_from_spritesheet_tp,
