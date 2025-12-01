@@ -1,4 +1,6 @@
-import { BrowserEnv, BrowserTicker, Camera2D, clamp, Karlib, Mutable } from "../src";
+import { Mutable } from "@goldenratio/core-utils";
+
+import { BrowserEnv, BrowserTicker, Camera2D, clamp, Karlib } from "../src";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
