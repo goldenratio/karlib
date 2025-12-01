@@ -1,4 +1,4 @@
-import { Mutable } from "@goldenratio/core-utils";
+import type { DeepMutable } from "@goldenratio/core-utils";
 
 import { BrowserEnv, BrowserTicker, Camera2D, clamp, Karlib } from "../src";
 
@@ -30,14 +30,14 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   window.addEventListener("keyup", (e) => keys_down.delete(e.key));
 
   // --- Camera ---------------------------------------------------------------
-  const camera: Mutable<Camera2D> = {
+  const camera: DeepMutable<Camera2D> = {
     offset: { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 }, // center hero on screen
     rotation: 0,
     target: { x: hero_x, y: hero_y },
     zoom: 1,
   };
 
-  function clamp_camera_to_world(cam: Mutable<Camera2D>) {
+  function clamp_camera_to_world(cam: DeepMutable<Camera2D>) {
     const half_view_w = CANVAS_WIDTH / (2 * cam.zoom);
     const half_view_h = CANVAS_HEIGHT / (2 * cam.zoom);
 
