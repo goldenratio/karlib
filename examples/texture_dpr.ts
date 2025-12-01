@@ -1,4 +1,4 @@
-import { BrowserEnv, BrowserTicker, Karlib } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src/index.js";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
@@ -14,7 +14,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   await kl.load_texture("./character_beige_front@{dpr}x.png", { available_dpr_scales: [1, 2], alias: "character_beige_front" });
 
   const ticker = new BrowserTicker();
-  ticker.on_tick(ticker_data => {
+  ticker.on_tick(() => {
     kl.clear_background("#000");
 
     kl.draw_texture({

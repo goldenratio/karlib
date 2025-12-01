@@ -18,7 +18,7 @@ async function main(): Promise<void> {
   canvas.width = CANVAS_WIDTH as number;
   canvas.height = CANVAS_HEIGHT as number;
 
-  Object.assign(canvas.style, <CSSStyleDeclaration>{
+  Object.assign(canvas.style, {
     // Style for centering
     display: "block",
     margin: "auto",
@@ -29,10 +29,10 @@ async function main(): Promise<void> {
     right: "0",
     maxWidth: "100%",
     maxHeight: "100%",
-  });
+  } as CSSStyleDeclaration);
 
 
-  Object.assign(document.body.style, <CSSStyleDeclaration>{
+  Object.assign(document.body.style, {
     backgroundColor: "#6d8891",
     margin: "0",
     fontFamily: "Roboto, Helvetica, 'Helvetica Neue', Verdana, Arial, serif",
@@ -40,7 +40,7 @@ async function main(): Promise<void> {
     color: "#000",
     height: "100vh",
     overflow: "hidden",
-  });
+  } as CSSStyleDeclaration);
 
   document.body.appendChild(canvas);
 

@@ -13,8 +13,9 @@
   },
   "scripts": {
     "clean": "rm -rf target js",
-    "build": "npm run clean && tsc && node ./build.ts",
+    "build": "npm run clean && tsc && node ./build.ts && npm run typecheck-examples",
     "example": "npm run clean && node ./example_server.ts",
+    "typecheck-examples": "tsc -p tsconfig.examples.json",
     "generate-docs": "rm -rf ./docs && typedoc --theme default --excludePrivate --excludeProtected",
     "version": "npm run build",
     "postversion": "git push && git push --tags"

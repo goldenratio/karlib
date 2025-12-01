@@ -1,6 +1,8 @@
 import type { DeepMutable } from "@goldenratio/core-utils";
+import { clamp } from "@goldenratio/core-utils";
 
-import { BrowserEnv, BrowserTicker, Camera2D, clamp, Karlib } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src/index.js";
+import type { Camera2D } from "../src/index.js";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;

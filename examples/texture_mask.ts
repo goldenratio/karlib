@@ -1,6 +1,7 @@
-import { Mutable } from "@goldenratio/core-utils";
+import type { Mutable } from "@goldenratio/core-utils";
 
-import { BrowserEnv, BrowserTicker, Karlib, MaskSource } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src/index.js";
+import type { MaskSource } from "../src/index.js";
 
 export const CANVAS_WIDTH = 918;
 export const CANVAS_HEIGHT = 515;
