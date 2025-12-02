@@ -11,7 +11,6 @@ export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boole
   );
 }
 
-
 /**
  * Find angle between 2 points
  * @returns value in radians
