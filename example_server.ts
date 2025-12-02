@@ -11,7 +11,7 @@ if (!example_module_name || example_module_name.includes("example_server.js")) {
   process.exit(1);
 }
 
-// checks If it is print cmd
+// checks If it is a print cmd
 if (
   example_module_name === "--help"
   || example_module_name.includes("example_server.ts")
@@ -76,7 +76,6 @@ async function main(): Promise<void> {
       const dest_path = path.join(dest_dir, file);
       fs.copyFileSync(src_path, dest_path);
     }
-
 
     const esbuild_path = path.join("node_modules", ".bin", "esbuild");
     const cmd = [

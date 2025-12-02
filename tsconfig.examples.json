@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": [ "ESNext", "DOM" ],
+    "target": "esnext",
+    "noEmit": true,
+    // rules
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": [
+    "./src",
+    "./examples"
+  ]
+}

@@ -1,4 +1,4 @@
-import { BrowserEnv, BrowserTicker, Karlib } from "../src";
+import { BrowserEnv, BrowserTicker, Karlib } from "../src/index.js";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;

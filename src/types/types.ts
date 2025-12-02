@@ -2,8 +2,6 @@ import type { SCALE_MODE } from "../constants.js";
 import type { EnvProvider } from "../env_provider/env_provider.js";
 import type { Texture } from "../texture.js";
 
-export type FixedLenArray<T, L extends number> = T[] & { length: L };
-
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 export type OutlineStyle = string | CanvasGradient | CanvasPattern;
 
@@ -139,18 +137,6 @@ export interface DrawNineSliceTextureOptions {
   readonly pivot?: Point;
   readonly blend_mode?: GlobalCompositeOperation;
 }
-
-// shallow mutable
-// export type Mutable<T> = {
-//   -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? U[] : T[P];
-// };
-
-// deep mutable
-export type Mutable<T> = {
-  -readonly [P in keyof T]: T[P] extends object
-  ? Mutable<T[P]>
-  : T[P];
-};
 
 export interface LoadTextureOptions {
   /**

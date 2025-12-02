@@ -1,4 +1,6 @@
-import type { FixedLenArray, LoadTextureOptions } from "../types/index.js";
+import type { FixedLenArray } from "@goldenratio/core-utils";
+
+import type { LoadTextureOptions } from "../types/index.js";
 
 export interface EnvProvider {
   create_canvas(width: number, height: number): OffscreenCanvas;

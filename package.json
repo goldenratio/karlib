@@ -13,8 +13,9 @@
   },
   "scripts": {
     "clean": "rm -rf target js",
-    "build": "npm run clean && tsc && node ./build.ts",
+    "build": "npm run clean && tsc && node ./build.ts && npm run typecheck-examples",
     "example": "npm run clean && node ./example_server.ts",
+    "typecheck-examples": "tsc -p tsconfig.examples.json",
     "generate-docs": "rm -rf ./docs && typedoc --theme default --excludePrivate --excludeProtected",
     "version": "npm run build",
     "postversion": "git push && git push --tags"
@@ -36,10 +37,10 @@
   ],
   "homepage": "https://github.com/goldenratio/karlib#readme",
   "devDependencies": {
-    "@goldenratio/core-utils": "0.0.1",
-    "@types/node": "24.7.2",
-    "esbuild": "0.25.10",
-    "typedoc": "0.28.14",
+    "@goldenratio/core-utils": "0.0.3",
+    "@types/node": "24.10.1",
+    "esbuild": "0.27.0",
+    "typedoc": "0.28.15",
     "typescript": "5.9.3"
   }
 }
