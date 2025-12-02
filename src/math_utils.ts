@@ -1,3 +1,4 @@
+import type { Mutable } from "@goldenratio/core-utils";
 import type { Point, Rectangle } from "./types/index.js";
 
 /**
@@ -38,4 +39,16 @@ export function distance_between_two_points(p1: Point, p2: Point): number {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   return Math.sqrt(dx * dx + dy * dy);
+}
+
+export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectangle>): void {
+  dest.x = src.x ?? dest.x;
+  dest.y = src.y ?? dest.y;
+  dest.width = src.width ?? dest.width;
+  dest.height = src.height ?? dest.height;
+}
+
+export function copy_point(dest: Partial<Mutable<Point>>, src: Partial<Point>): void {
+  dest.x = src.x ?? dest.x;
+  dest.y = src.y ?? dest.y;
 }
