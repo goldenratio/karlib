@@ -42,6 +42,16 @@ export function distance_between_two_points(p1: Point, p2: Point): number {
 }
 
 /**
+ * Distance between 2 points
+ * Less accurate, but faster
+ */
+export function distance_square(p1: Point, p2: Point): number {
+  const dx = p1.x - p2.x;
+  const dy = p1.y - p2.y;
+  return dx * dx + dy * dy;
+}
+
+/**
  * Copies Rectangle from src to dest
  */
 export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectangle>): void {
