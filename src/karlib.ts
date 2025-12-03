@@ -20,12 +20,16 @@ import type {
   SpriteSheetLoadTextureOptions,
   Camera2D,
   DrawNineSliceTextureOptions,
+  Rectangle,
+  Point,
 } from "./types/index.js";
+import { Camera2DUtil } from "./camera_utils.js";
 
 export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
   private readonly canvas_size: Size;
   private readonly texture_util: TextureUtil;
+  private readonly camera_util: Camera2DUtil;
   private readonly env: EnvProvider;
   private readonly res_textures = new Map<string, Texture>();
   private readonly pixel_perfect: boolean;
@@ -45,6 +49,7 @@ export class Karlib implements Disposable {
 
     this.context2d = ctx as CanvasRenderingContext2D;
     this.texture_util = new TextureUtil(env);
+    this.camera_util = new Camera2DUtil(env, this.canvas_size);
   }
 
   private add_texture_cache(texture_name: string, texture: Texture): void {
@@ -634,6 +639,14 @@ export class Karlib implements Disposable {
     ctx.restore();
   }
 
+  is_rect_in_camera_view(rect: Rectangle, camera: Camera2D): boolean {
+    return this.camera_util.is_rect_in_camera_view(rect, camera);
+  }
+
+  is_point_in_camera_view(point: Point, camera: Camera2D): boolean {
+    return this.camera_util.is_point_in_camera_view(point, camera);
+  }
+
   get_context_2d(): CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D {
     return this.context2d;
   }
@@ -664,6 +677,7 @@ export class Karlib implements Disposable {
    */
   dispose(): void {
     this.texture_util.dispose();
+    this.camera_util.dispose();
     for (const texture of this.res_textures.values()) {
       texture.dispose();
     }

@@ -1,11 +1,11 @@
-import { unwrap } from "@goldenratio/core-utils";
+import { unwrap, type Disposable } from "@goldenratio/core-utils";
 
 import { Texture } from "./texture.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
-import type { LoadTextureOptions, ScaleMode, SpriteSheetData, SpriteSheetLoadTextureOptions } from "./types/index.js";
+import type { SpriteSheetData, SpriteSheetLoadTextureOptions } from "./types/index.js";
 
-export class TextureUtil {
+export class TextureUtil implements Disposable {
   private readonly cache: Map<string, Texture> = new Map();
   private readonly canvas_pattern_cache: Map<string, CanvasPattern> = new Map();
   private readonly buffer: OffscreenCanvas;
