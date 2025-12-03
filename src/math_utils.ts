@@ -41,6 +41,9 @@ export function distance_between_two_points(p1: Point, p2: Point): number {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+/**
+ * Copies Rectangle from src to dest
+ */
 export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectangle>): void {
   dest.x = src.x ?? dest.x;
   dest.y = src.y ?? dest.y;
@@ -48,6 +51,9 @@ export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectan
   dest.height = src.height ?? dest.height;
 }
 
+/**
+ * Copies Point from src to dest
+ */
 export function copy_point(dest: Partial<Mutable<Point>>, src: Partial<Point>): void {
   dest.x = src.x ?? dest.x;
   dest.y = src.y ?? dest.y;
