@@ -1,3 +1,4 @@
+import type { Mutable } from "@goldenratio/core-utils";
 import type { Point, Rectangle } from "./types/index.js";
 
 /**
@@ -10,7 +11,6 @@ export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boole
     ((target2.y + target2.height) < target1.y)
   );
 }
-
 
 /**
  * Find angle between 2 points
@@ -39,4 +39,32 @@ export function distance_between_two_points(p1: Point, p2: Point): number {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   return Math.sqrt(dx * dx + dy * dy);
+}
+
+/**
+ * Distance between 2 points
+ * Less accurate, but faster
+ */
+export function distance_square(p1: Point, p2: Point): number {
+  const dx = p1.x - p2.x;
+  const dy = p1.y - p2.y;
+  return dx * dx + dy * dy;
+}
+
+/**
+ * Copies Rectangle from src to dest
+ */
+export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectangle>): void {
+  dest.x = src.x ?? dest.x;
+  dest.y = src.y ?? dest.y;
+  dest.width = src.width ?? dest.width;
+  dest.height = src.height ?? dest.height;
+}
+
+/**
+ * Copies Point from src to dest
+ */
+export function copy_point(dest: Partial<Mutable<Point>>, src: Partial<Point>): void {
+  dest.x = src.x ?? dest.x;
+  dest.y = src.y ?? dest.y;
 }

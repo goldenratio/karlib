@@ -22,7 +22,7 @@ export class BrowserEnv implements EnvProvider {
   }
 
   load_image(url: string, options?: LoadTextureOptions): Promise<ImageBitmap | undefined> {
-    const { pre_scale = 1, scale_mode = SCALE_MODE.Linear, available_dpr_scales } = options ?? {};
+    const { pre_scale = 1, scale_mode = SCALE_MODE.Linear } = options ?? {};
     return new Promise(async (resolve) => {
       try {
         const blob = await fetch(url).then(r => r.blob());
