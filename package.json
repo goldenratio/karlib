@@ -39,7 +39,7 @@
   "devDependencies": {
     "@goldenratio/core-utils": "0.0.3",
     "@types/node": "24.10.1",
-    "esbuild": "0.27.0",
+    "esbuild": "0.27.1",
     "typedoc": "0.28.15",
     "typescript": "5.9.3"
   }
