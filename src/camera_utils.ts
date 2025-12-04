@@ -83,8 +83,9 @@ export class Camera2DUtil {
     if (camera.rotation === 0) {
       // Convert world rect -> screen rect using simple zoom/offset math
       let sx1 = (x - camera.target.x) * camera.zoom + camera.offset.x;
-      let sy1 = (y - camera.target.y) * camera.zoom + camera.offset.y;
       let sx2 = (x + width - camera.target.x) * camera.zoom + camera.offset.x;
+
+      let sy1 = (y - camera.target.y) * camera.zoom + camera.offset.y;
       let sy2 = (y + height - camera.target.y) * camera.zoom + camera.offset.y;
 
       // Ensure proper min/max
@@ -114,6 +115,7 @@ export class Camera2DUtil {
 
     const min_screen_x = Math.min(p0.x, p1.x, p2.x, p3.x);
     const max_screen_x = Math.max(p0.x, p1.x, p2.x, p3.x);
+
     const min_screen_y = Math.min(p0.y, p1.y, p2.y, p3.y);
     const max_screen_y = Math.max(p0.y, p1.y, p2.y, p3.y);
 
