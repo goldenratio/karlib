@@ -75,8 +75,39 @@ export class Camera2DUtil {
       return false;
     }
 
-    const m = this.get_camera_transform(camera);
+    const canvas_min_x = -padding;
+    const canvas_max_x = this.canvas_size.width + padding;
 
+    const canvas_min_y = -padding;
+    const canvas_max_y = this.canvas_size.height + padding;
+
+    // fast path - no rotation
+    if (camera.rotation === 0) {
+      // Convert world rect -> screen rect using simple zoom/offset math
+      let sx1 = (x - camera.target.x) * camera.zoom + camera.offset.x;
+      let sy1 = (y - camera.target.y) * camera.zoom + camera.offset.y;
+      let sx2 = (x + width - camera.target.x) * camera.zoom + camera.offset.x;
+      let sy2 = (y + height - camera.target.y) * camera.zoom + camera.offset.y;
+
+      // Ensure proper min/max
+      if (sx1 > sx2) {
+        [sx1, sx2] = [sx2, sx1];
+      }
+
+      if (sy1 > sy2) {
+        [sy1, sy2] = [sy2, sy1];
+      }
+
+      const noOverlap =
+        sx2 < canvas_min_x ||
+        sx1 > canvas_max_x ||
+        sy2 < canvas_min_y ||
+        sy1 > canvas_max_y;
+
+      return !noOverlap;
+    }
+
+    const m = this.get_camera_transform(camera);
     // Transform the 4 corners to screen space
     const p0 = this.transform_point(m, x, y);
     const p1 = this.transform_point(m, x + width, y);
@@ -87,11 +118,6 @@ export class Camera2DUtil {
     const max_screen_x = Math.max(p0.x, p1.x, p2.x, p3.x);
     const min_screen_y = Math.min(p0.y, p1.y, p2.y, p3.y);
     const max_screen_y = Math.max(p0.y, p1.y, p2.y, p3.y);
-
-    const canvas_min_x = -padding;
-    const canvas_min_y = -padding;
-    const canvas_max_x = this.canvas_size.width + padding;
-    const canvas_max_y = this.canvas_size.height + padding;
 
     // AABB vs AABB intersection in screen-space
     const no_overlap =
@@ -116,13 +142,28 @@ export class Camera2DUtil {
     }
 
     const { x, y } = point;
+    const canvas_min_x = -padding;
+    const canvas_max_x = this.canvas_size.width + padding;
+
+    const canvas_min_y = -padding;
+    const canvas_max_y = this.canvas_size.height + padding;
+
+    // fast path - no rotation
+    if (camera.rotation === 0) {
+      // Convert world-space point -> screen-space
+      const sx = (x - camera.target.x) * camera.zoom + camera.offset.x;
+      const sy = (y - camera.target.y) * camera.zoom + camera.offset.y;
+
+      return (
+        sx >= canvas_min_x &&
+        sx <= canvas_max_x &&
+        sy >= canvas_min_y &&
+        sy <= canvas_max_y
+      );
+    }
+
     const m = this.get_camera_transform(camera);
     const p = this.transform_point(m, x, y);
-
-    const canvas_min_x = -padding;
-    const canvas_min_y = -padding;
-    const canvas_max_x = this.canvas_size.width + padding;
-    const canvas_max_y = this.canvas_size.height + padding;
 
     return (
       p.x >= canvas_min_x &&
