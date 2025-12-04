@@ -132,11 +132,7 @@ export class Camera2DUtil {
   /**
    * Returns true if the given world-space point is inside the camera view.
    */
-  is_point_in_camera_view(
-    point: Point,
-    camera: Camera2D,
-    padding: number = 0
-  ): boolean {
+  is_point_in_camera_view(point: Point, camera: Camera2D, padding: number = 0): boolean {
     if (camera.zoom === 0) {
       return false;
     }
