@@ -377,7 +377,7 @@ export class Karlib implements Disposable {
     ctx.translate(x, y);
     ctx.imageSmoothingEnabled = smooth_texture;
 
-    let matrix: DOMMatrix = this.env.create_dom_matrix();
+    let matrix = this.env.create_dom_matrix();
 
     const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
     const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;

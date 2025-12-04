@@ -21,39 +21,37 @@ export class Camera2DUtil {
   get_camera_transform(camera: Camera2D): DOMMatrix {
     const { offset, target, rotation, zoom } = camera;
 
-    const m = this.env.create_dom_matrix();
+    let matrix = this.env.create_dom_matrix();
 
     if (zoom === 0) {
       // Degenerate, but return identity to avoid NaNs everywhere
-      return m;
+      return matrix;
     }
 
-    let out = m;
-
     // Screen-space offset where the camera centers its target
-    out = out.translate(offset.x, offset.y);
+    matrix = matrix.translate(offset.x, offset.y);
 
     // Zoom
     if (zoom !== 1) {
-      out = out.scale(zoom, zoom);
+      matrix = matrix.scale(zoom, zoom);
     }
 
     // Rotation (degrees)
     if (rotation !== 0) {
-      out = out.rotate(rotation);
+      matrix = matrix.rotate(rotation);
     }
 
     // Move world so that target sits at the origin
-    out = out.translate(-target.x, -target.y);
+    matrix = matrix.translate(-target.x, -target.y);
 
-    return out;
+    return matrix;
   }
 
   /**
    * Helper to apply a DOMMatrix to a point.
    */
-  private transform_point(m: DOMMatrix, x: number, y: number): Point {
-    const p = m.transformPoint({ x, y });
+  private transform_point(matrix: DOMMatrix, x: number, y: number): Point {
+    const p = matrix.transformPoint({ x, y });
     return { x: p.x, y: p.y };
   }
 
