@@ -94,7 +94,14 @@ Games created using karlib:
 ## Release
 
 ### NPM
-```
+```console
 npm version {major | minor | patch}
 npm publish
+
+# If you have ignore-scripts enabled
+npm version {major | minor | patch}
+npm run version
+npm run postversion
+npm publish
+
 ```
