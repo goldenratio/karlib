@@ -74,6 +74,9 @@ export class BrowserTicker implements Ticker, Disposable {
     this.elapsed_ms = 1 / this.target_fpms;
   }
 
+  /**
+   * @inheritdoc
+   */
   on_tick(fn: TickerCallbackType): void {
     if (this.raf_id !== -1) {
       // ticker already running
@@ -105,10 +108,16 @@ export class BrowserTicker implements Ticker, Disposable {
     this.raf_id = globalThis.requestAnimationFrame(update_loop);
   }
 
+  /**
+   * @inheritdoc
+   */
   set_speed(value: number): void {
     this.speed = value;
   }
 
+  /**
+   * @inheritdoc
+   */
   get_fps(): number {
     return (1000 / this.elapsed_ms) | 0;
   }
