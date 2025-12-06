@@ -49,6 +49,9 @@ export interface DrawLineOptions {
    */
   readonly line_cap?: CanvasLineCap;
   readonly alpha?: number;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
@@ -71,6 +74,9 @@ export interface DrawRectangleOptions {
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
@@ -84,6 +90,9 @@ export interface DrawCircleOptions {
   readonly pivot?: Point;
   readonly scale?: number | Point;
   readonly alpha?: number;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
@@ -103,6 +112,9 @@ export interface DrawTextureOptions {
   readonly tint_color?: string;
   readonly tint_alpha?: number;
   readonly source_rect?: Rectangle;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
@@ -120,6 +132,9 @@ export interface DrawTextureTileOptions {
   readonly tile_rotate?: number;
   readonly tile_scale?: number | Point;
   readonly tile_alpha?: number;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
@@ -135,6 +150,9 @@ export interface DrawNineSliceTextureOptions {
   readonly height: number;
   readonly alpha?: number;
   readonly pivot?: Point;
+  /**
+   * @default 'source-over'
+   */
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
