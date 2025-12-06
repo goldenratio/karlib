@@ -1,12 +1,18 @@
+import type { Disposable } from "@goldenratio/core-utils";
+
 import { SCALE_MODE } from "../constants.js";
 import type { LoadTextureOptions } from "../types/index.js";
 import type { EnvProvider } from "./env_provider.js";
 
-export class BrowserEnv implements EnvProvider {
+export class BrowserEnv implements EnvProvider, Disposable {
   private readonly dpr: number;
 
   constructor() {
     this.dpr = Math.ceil(window.devicePixelRatio || 1);
+  }
+
+  dispose(): void {
+    // empty
   }
 
   get_device_pixel_ratio(): number {
