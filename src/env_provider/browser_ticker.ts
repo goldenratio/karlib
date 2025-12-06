@@ -6,7 +6,8 @@ export interface Ticker {
    */
   on_tick(fn: TickerCallbackType): void;
   /**
-   * Sets speed of the ticker
+   * Sets speed of the ticker.
+   * Value between 0 to 1
    */
   set_speed(value: number): void;
   /**
