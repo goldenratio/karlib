@@ -38,10 +38,10 @@ export class BrowserEnv implements EnvProvider, Disposable {
           return;
         }
 
-        const width = Math.round(bitmap.width * pre_scale);
-        const height = Math.round(bitmap.height * pre_scale);
+        const width_scaled = Math.round(bitmap.width * pre_scale);
+        const height_scaled = Math.round(bitmap.height * pre_scale);
 
-        const canvas = this.create_canvas(width, height);
+        const canvas = this.create_canvas(width_scaled, height_scaled);
         const ctx = canvas.getContext("2d");
         if (!ctx) {
           resolve(bitmap);
@@ -49,7 +49,7 @@ export class BrowserEnv implements EnvProvider, Disposable {
         }
         const smooth_texture = scale_mode === SCALE_MODE.Linear;
         ctx.imageSmoothingEnabled = smooth_texture;
-        ctx.drawImage(bitmap, 0, 0, width, height);
+        ctx.drawImage(bitmap, 0, 0, width_scaled, height_scaled);
 
         // cannot use createImageBitmap's resize option,
         // because it pixelates pixel art graphics when resized
