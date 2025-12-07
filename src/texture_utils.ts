@@ -89,7 +89,7 @@ export class TextureUtil implements Disposable {
 
   private create_canvas_pattern_from_canvas(source: Texture, repetition: string): CanvasPattern | undefined {
     const img_src = source.get_src();
-    const temp_canvas = this.env.create_canvas(img_src.width, img_src.height);
+    const temp_canvas: OffscreenCanvas = this.env.create_canvas(img_src.width, img_src.height);
     const temp_context2d = temp_canvas.getContext("2d");
     if (temp_context2d) {
       const scale_mode = source.get_scale_mode();

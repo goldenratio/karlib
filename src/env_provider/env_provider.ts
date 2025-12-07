@@ -30,6 +30,7 @@ export interface EnvProvider {
 
   /**
    * Retrieve the device pixel ratio for the current environment.
+   * Returns integer, fallbacks to 1
    */
   get_device_pixel_ratio(): number;
 }
