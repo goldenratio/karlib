@@ -73,10 +73,9 @@ export class TextureUtil implements Disposable {
       pattern = this.ctx.createPattern(img_src, repetition) ?? undefined;
     } catch (err) {
       if (err instanceof TypeError) {
-        // TODO: REMOVE, when safari 16.x is no longer supported
+        // TODO: known issue
         // iOS safari 16.x, doesn't support ImageBitmap in createPattern method
-        // Apple still doesn't fix this shit.
-        // fallback impl
+        // It throws TypeError, hence the below fallback implementation
         pattern = this.create_canvas_pattern_from_canvas(source, repetition);
       }
     }

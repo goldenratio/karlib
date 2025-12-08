@@ -375,6 +375,9 @@ export class Karlib implements Disposable {
     }
     ctx.globalAlpha = ctx.globalAlpha * tile_alpha;
     ctx.translate(x, y);
+    // TODO: known issue
+    // in Safari when tile is scaled, it ignores `imageSmoothingEnabled`
+    // recommended workaround, it it scale the texture in `load_texture` with `pre_scale` property
     ctx.imageSmoothingEnabled = smooth_texture;
 
     let matrix = this.env.create_dom_matrix();
