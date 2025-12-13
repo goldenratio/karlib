@@ -307,7 +307,7 @@ export class Karlib implements Disposable {
     const sx = (typeof scale === "number" ? scale : scale.x) / texture_dpr_scale;
     const sy = (typeof scale === "number" ? scale : scale.y) / texture_dpr_scale;
 
-    if (sx === 0 || sy === 0 || alpha === 0) {
+    if (sx === 0 || sy === 0 || alpha <= 0) {
       return;
     }
 
@@ -369,6 +369,13 @@ export class Karlib implements Disposable {
     const smooth_texture = texture.get_scale_mode() === SCALE_MODE.Linear;
     const ctx = this.context2d;
 
+    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
+    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;
+
+    if (sx === 0 || sy === 0 || tile_alpha <= 0) {
+      return;
+    }
+
     ctx.save();
     if (blend_mode) {
       ctx.globalCompositeOperation = blend_mode;
@@ -381,10 +388,6 @@ export class Karlib implements Disposable {
     ctx.imageSmoothingEnabled = smooth_texture;
 
     let matrix = this.env.create_dom_matrix();
-
-    const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
-    const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;
-
     matrix = matrix.scale(sx, sy);
 
     if (tile_position_x !== 0 || tile_position_y !== 0) {
@@ -434,6 +437,11 @@ export class Karlib implements Disposable {
       left_width, right_width, top_height, bottom_height,
       pivot = { x: 0, y: 0 }, blend_mode
     } = options;
+
+
+    if (alpha <= 0) {
+      return;
+    }
 
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)

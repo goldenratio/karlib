@@ -108,6 +108,9 @@ export interface DrawTextureOptions {
   readonly rotate?: number;
   readonly pivot?: Point;
   readonly scale?: number | Point;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
   readonly tint_color?: string;
   readonly tint_alpha?: number;
