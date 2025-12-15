@@ -102,15 +102,18 @@ export class ParticleEmitter implements Disposable {
 
   /**
    * Update loop
-   * @param elapsed_ms milliseconds elapsed from last updated. Ideally value should be 16.66 ms
+   * @param delta_time Scalar representing the delta time factor (value between 0 to 1)
    */
-  update(elapsed_ms: number): void {
+  update(delta_time: number): void {
     if (this.completed) {
       return;
     }
 
-    const delta = elapsed_ms * 0.001; // basically 16.66ms / 1000
-    this.spawn_timer += delta; // ideally, 0.0166
+    // const delta = delta_time * 0.001; // basically 16.66ms / 1000
+    // this.spawn_timer += delta; // ideally, 0.0166
+
+    const delta = delta_time * 0.0166; // 0.0166 is (1 / 60);
+    this.spawn_timer += delta;
 
     while (this.emit
       && this.spawn_timer >= this.frequency

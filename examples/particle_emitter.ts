@@ -678,10 +678,10 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
     console.log("emitter animation complete!");
   });
 
-  ticker.on_tick(ticker_data => {
+  ticker.on_tick(({ delta_time }) => {
     kl.clear_background("#000");
 
-    emitter?.update(ticker_data.elapsed_ms);
+    emitter?.update(delta_time);
     emitter?.draw();
   });
 
@@ -728,5 +728,4 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   help_text.innerText = "Use right/left arrow keys to toggle between particle examples!";
 
   document.body.appendChild(help_text);
-
 }
