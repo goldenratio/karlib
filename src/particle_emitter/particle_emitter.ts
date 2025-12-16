@@ -35,22 +35,22 @@ export class ParticleEmitter implements Disposable {
   constructor(kl: Karlib, config: EmitterConfig) {
     this.spawn_timer = 0;
 
-    this.particles_per_wave = config.particles_per_wave ?? 1;
-    this.max_particles = config.max_particles ?? 20;
-    this.frequency = Math.max(0.0001, config.frequency); // seconds per particle
-    this.pos = { x: config.pos.x, y: config.pos.y };
+    this.particles_per_wave = config["particles_per_wave"] ?? 1;
+    this.max_particles = config["max_particles"] ?? 20;
+    this.frequency = Math.max(0.0001, config["frequency"]); // seconds per particle
+    this.pos = { x: config["pos"].x, y: config["pos"].y };
 
-    this.is_infinite = typeof config.emitter_lifetime === "undefined"
+    this.is_infinite = typeof config["emitter_lifetime"] === "undefined"
       ? true
-      : config.emitter_lifetime === -1;
+      : config["emitter_lifetime"] === -1;
 
     this.emitter_age = 0;
-    this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config.emitter_lifetime ?? 1);
-    this.emit = config.emit ?? true;
+    this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config["emitter_lifetime"] ?? 1);
+    this.emit = config["emit"] ?? true;
 
     // --- detect & cache spawnBurst config ---
-    this.spawn_burst_config = config.behaviors.find(b => b.type === "spawnBurst")?.config;
-    this.spawn_shape_config = config.behaviors.find(b => b.type === "spawnShape")?.config;
+    this.spawn_burst_config = config["behaviors"].find(b => b.type === "spawnBurst")?.config;
+    this.spawn_shape_config = config["behaviors"].find(b => b.type === "spawnShape")?.config;
 
     this.particles_pool_bag = new PoolBag({
       create_pooled_item: () => new Particle(kl, config),

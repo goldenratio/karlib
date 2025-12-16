@@ -81,76 +81,76 @@ export class Particle implements Disposable {
     this.kl = kl;
     this.config = config;
 
-    const alpha_list = config.behaviors.find(b => b.type === "alpha")?.config.alpha.list;
+    const alpha_list = config["behaviors"].find(b => b.type === "alpha")?.["config"]["alpha"]["list"];
     if (alpha_list) {
       this.get_alpha = t => sample_key_frames(alpha_list, t);
     }
-    const alpha_static = config.behaviors.find(b => b.type === "alphaStatic")?.config.alpha;
+    const alpha_static = config["behaviors"].find(b => b.type === "alphaStatic")?.["config"]["alpha"];
     if (typeof alpha_static === "number") {
       this.get_alpha = _ => alpha_static;
     }
 
-    const color_list = config.behaviors.find(b => b.type === "color")?.config.color.list;
+    const color_list = config["behaviors"].find(b => b.type === "color")?.["config"]["color"]["list"];
     if (color_list) {
       this.get_color = t => sample_key_frames(color_list, t);
     }
-    const color_static = config.behaviors.find(b => b.type === "colorStatic")?.config.color;
+    const color_static = config["behaviors"].find(b => b.type === "colorStatic")?.["config"]["color"];
     if (color_static) {
       this.get_color = _ => color_static;
     }
 
-    const scale_cfg = config.behaviors.find(b => b.type === "scale")?.config;
+    const scale_cfg = config["behaviors"].find(b => b.type === "scale")?.["config"];
     if (scale_cfg) {
-      this.get_scale = t => sample_key_frames(scale_cfg.scale.list, t) * (scale_cfg.min_mult ?? 1);
+      this.get_scale = t => sample_key_frames(scale_cfg["scale"]["list"], t) * (scale_cfg["min_mult"] ?? 1);
     }
-    const scale_static = config.behaviors.find(b => b.type === "scaleStatic")?.config;
+    const scale_static = config["behaviors"].find(b => b.type === "scaleStatic")?.["config"];
     if (scale_static) {
-      this.get_scale = _ => (Math.random() * (scale_static.max - scale_static.min)) + scale_static.min;
+      this.get_scale = _ => (Math.random() * (scale_static["max"] - scale_static["min"])) + scale_static["min"];
     }
 
-    const speed_cfg = config.behaviors.find(b => b.type === "moveSpeed")?.config;
+    const speed_cfg = config["behaviors"].find(b => b.type === "moveSpeed")?.["config"];
     if (speed_cfg) {
-      this.get_speed = t => sample_key_frames(speed_cfg.speed.list, t) * (speed_cfg.min_mult ?? 1);
+      this.get_speed = t => sample_key_frames(speed_cfg["speed"]["list"], t) * (speed_cfg["min_mult"] ?? 1);
     }
-    const speed_static_cfg = config.behaviors.find(b => b.type === "moveSpeedStatic")?.config;
+    const speed_static_cfg = config["behaviors"].find(b => b.type === "moveSpeedStatic")?.["config"];
     if (speed_static_cfg) {
-      this.get_speed = _ => (Math.random() * (speed_static_cfg.max - speed_static_cfg.min)) + speed_static_cfg.min;
+      this.get_speed = _ => (Math.random() * (speed_static_cfg["max"] - speed_static_cfg["min"])) + speed_static_cfg["min"];
     }
 
-    const texture_cfg = config.behaviors.find(b => b.type === "textureSingle")?.config;
+    const texture_cfg = config["behaviors"].find(b => b.type === "textureSingle")?.["config"];
     if (texture_cfg) {
       this.static_draw_texture_options = {
-        texture: texture_cfg.texture,
+        texture: texture_cfg["texture"],
         pivot: { x: 0.5, y: 0.5 },
       }
     }
-    const texture_random_cfg = config.behaviors.find(b => b.type === "textureRandom")?.config;
+    const texture_random_cfg = config["behaviors"].find(b => b.type === "textureRandom")?.["config"];
     if (texture_random_cfg) {
       this.static_draw_texture_options = {
-        texture: unwrap(random_item_from_array(texture_random_cfg.textures), "error get random texture"),
+        texture: unwrap(random_item_from_array(texture_random_cfg["textures"]), "error get random texture"),
         pivot: { x: 0.5, y: 0.5 }
       }
     }
 
-    const animated_single_cfg = config.behaviors.find(b => b.type === "animatedSingle")?.config;
+    const animated_single_cfg = config["behaviors"].find(b => b.type === "animatedSingle")?.["config"];
     if (animated_single_cfg) {
       this.animated_texture = new AnimatedTexture(kl, {
-        frames: animated_single_cfg.anim.textures,
-        frame_duration: animated_single_cfg.anim.frame_duration,
-        loop: animated_single_cfg.anim.loop ? Infinity : 1,
+        frames: animated_single_cfg["anim"]["textures"],
+        frame_duration: animated_single_cfg["anim"]["frame_duration"],
+        loop: animated_single_cfg["anim"]["loop"] ? Infinity : 1,
       });
 
       this.animated_draw_texture_options = {
         pivot: { x: 0.5, y: 0.5 }
       };
     }
-    const animated_random_cfg = config.behaviors.find(b => b.type === "animatedRandom")?.config;
+    const animated_random_cfg = config["behaviors"].find(b => b.type === "animatedRandom")?.["config"];
     if (animated_random_cfg) {
-      const anim_cfg = unwrap(random_item_from_array(animated_random_cfg.anims), "error getting random animation config");
+      const anim_cfg = unwrap(random_item_from_array(animated_random_cfg["anims"]), "error getting random animation config");
       this.animated_texture = new AnimatedTexture(kl, {
-        frames: anim_cfg.textures,
-        frame_duration: anim_cfg.frame_duration,
-        loop: anim_cfg.loop ? Infinity : 1,
+        frames: anim_cfg["textures"],
+        frame_duration: anim_cfg["frame_duration"],
+        loop: anim_cfg["loop"] ? Infinity : 1,
       });
 
       this.animated_draw_texture_options = {
@@ -159,9 +159,9 @@ export class Particle implements Disposable {
 
     }
 
-    this.rot_static_cfg = config.behaviors.find(b => b.type === "rotationStatic")?.config;
-    this.rot_cfg = config.behaviors.find(b => b.type === "rotation")?.config;
-    this.accel_cfg = config.behaviors.find(b => b.type === "moveAcceleration")?.config;
+    this.rot_static_cfg = config["behaviors"].find(b => b.type === "rotationStatic")?.["config"];
+    this.rot_cfg = config["behaviors"].find(b => b.type === "rotation")?.["config"];
+    this.accel_cfg = config["behaviors"].find(b => b.type === "moveAcceleration")?.["config"];
 
     if (this.static_draw_texture_options) {
       this.static_draw_texture_options.blend_mode = config.blend_mode;
@@ -185,11 +185,11 @@ export class Particle implements Disposable {
    */
   reset(): void {
     const config = this.config;
-    const life = lerp(config.lifetime.min, config.lifetime.max, Math.random());
+    const life = lerp(config["lifetime"]["min"], config["lifetime"]["max"], Math.random());
     this.life = life; // seconds total
     this.age = 0; // seconds elapsed
-    this.pos.x = config.pos.x;
-    this.pos.y = config.pos.y;
+    this.pos.x = config["pos"]["x"];
+    this.pos.y = config["pos"]["y"];
 
     this.seed_rotation_from_behaviors();
 
