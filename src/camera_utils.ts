@@ -1,6 +1,6 @@
 import type { Disposable } from "@goldenratio/core-utils";
 import type { EnvProvider } from "./env_provider/env_provider.js";
-import type { Camera2D, Point, Rectangle, Size } from "./types/types.js";
+import type { Camera2D, Point, Rectangle, Size } from "./types.js";
 
 export class Camera2DUtil implements Disposable {
   private readonly env: EnvProvider;

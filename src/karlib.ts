@@ -15,14 +15,14 @@ import type {
   DrawTextureOptions, DrawTextureTileOptions, InitOptions,
   Size,
   LoadTextureOptions,
-  SpriteSheetData,
   MaskSource,
   SpriteSheetLoadTextureOptions,
   Camera2D,
   DrawNineSliceTextureOptions,
   Rectangle,
   Point,
-} from "./types/index.js";
+} from "./types.js";
+import type { SpriteSheetData } from "./types/spritesheet_types.js";
 import { Camera2DUtil } from "./camera_utils.js";
 
 export class Karlib implements Disposable {

@@ -2,7 +2,7 @@ import type { Disposable, Mutable } from "@goldenratio/core-utils";
 import { PoolBag, to_radians } from "@goldenratio/core-utils";
 
 import type { Karlib } from "../karlib.js";
-import type { Point } from "../types/types.js";
+import type { Point } from "../types.js";
 
 import { Particle } from "./particle.js";
 import type { BehaviorConfigOf, EmitterConfig } from "./types.js";

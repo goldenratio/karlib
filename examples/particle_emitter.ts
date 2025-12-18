@@ -1,5 +1,5 @@
-import { BrowserEnv, BrowserTicker, Karlib, ParticleEmitter } from "../src/index.js";
-import type { EmitterConfig } from "../src/index.js";
+import { BrowserEnv, BrowserTicker, Karlib, ParticleEmitter } from "../src/main.js";
+import type { EmitterConfig } from "../src/main.js";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;

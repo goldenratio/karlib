@@ -1,5 +1,5 @@
 import type { Mutable } from "@goldenratio/core-utils";
-import type { Point, Rectangle } from "./types/index.js";
+import type { Point, Rectangle } from "./types.js";
 
 /**
  * Tells if 2 Rectangles are colliding

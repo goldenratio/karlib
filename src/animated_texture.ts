@@ -3,7 +3,7 @@ import { unwrap } from "@goldenratio/core-utils";
 
 import type { Karlib } from "./karlib.js";
 import type { Texture } from "./texture.js";
-import type { DrawTextureOptions } from "./types/index.js";
+import type { DrawTextureOptions } from "./types.js";
 
 export interface AnimatedTextureOptions {
   /**

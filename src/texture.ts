@@ -1,5 +1,5 @@
 import { SCALE_MODE } from "./constants.js";
-import type { ScaleMode } from "./types/index.js";
+import type { ScaleMode } from "./types.js";
 
 let id = 0;
 
