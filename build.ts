@@ -42,7 +42,7 @@ async function perform_build(options?: BuildOptions): Promise<void> {
   const start_time = Date.now();
   const target_file_name = minify ? `${package_name}.min.js` : `${package_name}.js`;
 
-  const src_path = path.join("src", "index.ts");
+  const src_path = path.join("src", "main.ts");
   const dest_path = path.join("target", target_file_name);
 
   console.log(`Building... ${src_path} -> ${dest_path}`);
