@@ -4,7 +4,7 @@
   "description": "A minimal HTML5 canvas library, fine tuned for web games developement",
   "type": "module",
   "module": "./target/karlib.js",
-  "types": "./target/types/index.d.ts",
+  "types": "./target/types/main.d.ts",
   "exports": {
     ".": {
       "types": "./target/types/index.d.ts",
