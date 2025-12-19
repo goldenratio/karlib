@@ -71,17 +71,16 @@ export function copy_point(dest: Partial<Mutable<Point>>, src: Partial<Point>): 
 
 /**
  * Rotates a point by a given angle.
+ * @param px
+ * @param py
  * @param angle_radians The angle to rotate by in radians
- * @param src The point to rotate around 0,0.
+ * @returns a new Point
  */
-export function rotate_point(angle_radians: number, src: Mutable<Point>): void {
-  if (!angle_radians) return;
-
-  const s = Math.sin(angle_radians);
+export function rotate_point(px: number, py: number, angle_radians: number): Point {
   const c = Math.cos(angle_radians);
-  const xnew = (src.x * c) - (src.y * s);
-  const ynew = (src.x * s) + (src.y * c);
-
-  src.x = xnew;
-  src.y = ynew;
+  const s = Math.sin(angle_radians);
+  return {
+    x: px * c - py * s,
+    y: px * s + py * c
+  };
 }
