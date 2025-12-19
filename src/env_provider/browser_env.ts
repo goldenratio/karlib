@@ -1,7 +1,7 @@
 import type { Disposable } from "@goldenratio/core-utils";
 
 import { SCALE_MODE } from "../constants.js";
-import type { LoadTextureOptions } from "../types.js";
+import type { LoadTextureOptions } from "../types/types.js";
 import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider, Disposable {

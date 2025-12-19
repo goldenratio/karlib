@@ -1,6 +1,6 @@
 import type { FixedLenArray } from "@goldenratio/core-utils";
 
-import type { LoadTextureOptions } from "../types.js";
+import type { LoadTextureOptions } from "../types/types.js";
 
 export interface EnvProvider {
   /**

@@ -1,4 +1,4 @@
-import type { Point } from "../types.js";
+import type { Point } from "../types/types.js";
 
 /**
  * Emitter Config is based on pixi-particle

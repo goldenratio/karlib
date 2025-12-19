@@ -1,5 +1,5 @@
 export * from "./constants.js";
-export * from "./types.js";
+export * from "./types/types.js";
 export * from "./types/spritesheet_types.js";
 export * from "./math_utils.js";
 export * from "./texture.js";

@@ -3,7 +3,7 @@ import { unwrap, type Disposable } from "@goldenratio/core-utils";
 import { Texture } from "./texture.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
-import type { SpriteSheetLoadTextureOptions } from "./types.js";
+import type { SpriteSheetLoadTextureOptions } from "./types/types.js";
 import type { SpriteSheetData } from "./types/spritesheet_types.js";
 
 export class TextureUtil implements Disposable {

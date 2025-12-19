@@ -21,7 +21,7 @@ import type {
   DrawNineSliceTextureOptions,
   Rectangle,
   Point,
-} from "./types.js";
+} from "./types/types.js";
 import type { SpriteSheetData } from "./types/spritesheet_types.js";
 import { Camera2DUtil } from "./camera_utils.js";
 
