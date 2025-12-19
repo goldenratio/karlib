@@ -189,11 +189,17 @@ export class ParticleEmitter implements Disposable {
           const local_x = r.x + Math.random() * r.w;
           const local_y = r.y + Math.random() * r.h;
 
-          // Rotate local offset around emitter origin
-          const o = rotate_point(local_x, local_y, this.rotate_radians);
-
-          const sx = this.pos.x + o.x;
-          const sy = this.pos.y + o.y;
+          let sx: number;
+          let sy: number;
+          if (this.rotate_radians === 0) {
+            sx = this.pos.x + local_x;
+            sy = this.pos.y + local_y;
+          } else {
+            // Rotate local offset around emitter origin
+            const o = rotate_point(local_x, local_y, this.rotate_radians);
+            sx = this.pos.x + o.x;
+            sy = this.pos.y + o.y;
+          }
           particle.update_spawn_pos(sx, sy);
           // direction/rotation come from particle's seeded behaviors
         } else if (shape_cfg.type === "torus") {
