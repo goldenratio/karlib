@@ -90,6 +90,14 @@ export class ParticleEmitter implements Disposable {
   }
 
   /**
+   * Tells If the emitter has finished emitting particles.
+   * If lifetime is -1, this will always be false
+   */
+  get_is_completed(): boolean {
+    return this.completed;
+  }
+
+  /**
    * Changes the spawn position of the emitter.
    * Changing spawn position will restart the emitter
    * @param x The new x value of the spawn position for the emitter.
