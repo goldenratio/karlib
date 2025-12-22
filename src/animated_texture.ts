@@ -148,8 +148,8 @@ export class AnimatedTexture implements Disposable {
     // this.acc += elapsed_ms * this.speed;
 
     // Accumulate elapsed milliseconds scaled by global speed multiplier
-    const delta_ms = delta_time * 16.66; // (1000 / 60);
-    this.acc += delta_ms * this.speed;
+    const elapsed_ms = delta_time * 16.66; // (1000 / 60);
+    this.acc += elapsed_ms * this.speed;
 
     const frame_duration = this.frame_duration;
 
