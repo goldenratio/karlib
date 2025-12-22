@@ -138,15 +138,18 @@ export class AnimatedTexture implements Disposable {
 
   /**
    * Update loop
-   * @param elapsed_ms milliseconds elapsed from last updated. Ideally value should be 16.66 ms
+   * @param delta_time Scalar representing the delta time factor (value between 0 to 1)
    */
-  update(elapsed_ms: number): void {
-    if (!this.playing || this.frames.length <= 1 || elapsed_ms <= 0 || this.speed === 0) {
+  update(delta_time: number): void {
+    if (!this.playing || this.frames.length <= 1 || delta_time <= 0 || this.speed === 0) {
       return;
     }
 
+    // this.acc += elapsed_ms * this.speed;
+
     // Accumulate elapsed milliseconds scaled by global speed multiplier
-    this.acc += elapsed_ms * this.speed;
+    const delta_ms = delta_time * 16.66; // (1000 / 60);
+    this.acc += delta_ms * this.speed;
 
     const frame_duration = this.frame_duration;
 

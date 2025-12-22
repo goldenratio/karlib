@@ -32,10 +32,10 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   });
 
   const ticker = new BrowserTicker();
-  ticker.on_tick(ticker_data => {
+  ticker.on_tick(({ delta_time }) => {
     kl.clear_background("#000");
 
-    anim.update(ticker_data.elapsed_ms);
+    anim.update(delta_time);
     anim.draw();
   });
 }
