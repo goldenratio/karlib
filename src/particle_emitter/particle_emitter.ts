@@ -131,7 +131,7 @@ export class ParticleEmitter implements Disposable {
       return;
     }
 
-    // const delta = delta_time * 0.001; // basically 16.66ms / 1000
+    // const delta = elapsed_ms * 0.001; // basically 16.66ms / 1000
     // this.spawn_timer += delta; // ideally, 0.0166
 
     const delta = delta_time * 0.0166; // 0.0166 is (1 / 60);
