@@ -8,41 +8,74 @@ import { vec_from_angle } from "../math_utils.js";
 import type { EmitterConfigValue, EmitterConfig, BehaviorConfigOf } from "./types.js";
 import { AnimatedTexture, type DrawAnimatedTextureOptions } from "../animated_texture.js";
 
-function hex_to_rgb(hex: string): { r: number, g: number, b: number } {
+type RGBColor = {
+  readonly r: number;
+  readonly g: number;
+  readonly b: number;
+}
+
+function hex_to_rgb(hex: string): RGBColor {
   const h = hex.replace("#", "");
   const bigint = parseInt(h.length === 3 ? h.split("").map(c => c + c).join("") : h, 16);
   return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
 }
 
-function rgb_to_hex({ r, g, b }: { r: number, g: number, b: number }): string {
+function rgb_to_hex({ r, g, b }: RGBColor): string {
   const toHex = (v: number) => v.toString(16).padStart(2, "0");
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-function sample_key_frames<TValue>(list: readonly EmitterConfigValue<TValue>[], t: number): TValue {
-  // list: [{time:0..1, value:number|string}]
+function sample_key_frames<TValue extends number | string>(
+  list: readonly EmitterConfigValue<TValue>[],
+  t: number,
+  default_value: TValue
+): TValue {
+  // type of `list: [{time:0..1, value:number|string}]`
   t = clamp(t, 0, 1);
-  if (!list || list.length === 0) return 0 as TValue;
-  if (list.length === 1) return list[0].value;
-  // find segment
-  let a = list[0], b = list[list.length - 1];
-  for (let i = 0; i < list.length - 1; i++) {
-    if (t >= list[i].time && t <= list[i + 1].time) { a = list[i]; b = list[i + 1]; break; }
+  if (!list || list.length === 0) {
+    return default_value;
   }
+
+  if (list.length === 1 && list[0]) {
+    return list[0].value;
+  }
+
+  // find segment
+  let a = list[0];
+  let b = list[list.length - 1];
+
+  for (let i = 0; i < list.length - 1; i++) {
+    const current = list[i];
+    const next = list[i + 1];
+    if (current && next) {
+      if (t >= current.time && t <= next.time) {
+        a = list[i];
+        b = list[i + 1];
+        break;
+      }
+    }
+  }
+
+  if (!a || !b) {
+    return default_value;
+  }
+
   const span = (b.time - a.time) || 1e-6;
   const lt = (t - a.time) / span;
   // numeric or color
   if (typeof a.value === "number" && typeof b.value === "number") {
     return lerp(a.value, b.value, lt) as TValue;
-  } else {
-    const ca = hex_to_rgb(a.value as string);
-    const cb = hex_to_rgb(b.value as string);
+  } else if (typeof a.value === "string" && typeof b.value === "string") {
+    const ca = hex_to_rgb(a.value);
+    const cb = hex_to_rgb(b.value);
     return rgb_to_hex({
       r: Math.round(lerp(ca.r, cb.r, lt)),
       g: Math.round(lerp(ca.g, cb.g, lt)),
       b: Math.round(lerp(ca.b, cb.b, lt))
     }) as TValue;
   }
+
+  return default_value;
 }
 
 export class Particle implements Disposable {
@@ -83,7 +116,7 @@ export class Particle implements Disposable {
 
     const alpha_list = config["behaviors"].find(b => b.type === "alpha")?.["config"]["alpha"]["list"];
     if (alpha_list) {
-      this.get_alpha = t => sample_key_frames(alpha_list, t);
+      this.get_alpha = t => sample_key_frames(alpha_list, t, 0);
     }
     const alpha_static = config["behaviors"].find(b => b.type === "alphaStatic")?.["config"]["alpha"];
     if (typeof alpha_static === "number") {
@@ -92,7 +125,7 @@ export class Particle implements Disposable {
 
     const color_list = config["behaviors"].find(b => b.type === "color")?.["config"]["color"]["list"];
     if (color_list) {
-      this.get_color = t => sample_key_frames(color_list, t);
+      this.get_color = t => sample_key_frames(color_list, t, "#000000");
     }
     const color_static = config["behaviors"].find(b => b.type === "colorStatic")?.["config"]["color"];
     if (color_static) {
@@ -101,7 +134,7 @@ export class Particle implements Disposable {
 
     const scale_cfg = config["behaviors"].find(b => b.type === "scale")?.["config"];
     if (scale_cfg) {
-      this.get_scale = t => sample_key_frames(scale_cfg["scale"]["list"], t) * (scale_cfg["min_mult"] ?? 1);
+      this.get_scale = t => sample_key_frames(scale_cfg["scale"]["list"], t, 0) * (scale_cfg["min_mult"] ?? 1);
     }
     const scale_static = config["behaviors"].find(b => b.type === "scaleStatic")?.["config"];
     if (scale_static) {
@@ -110,7 +143,7 @@ export class Particle implements Disposable {
 
     const speed_cfg = config["behaviors"].find(b => b.type === "moveSpeed")?.["config"];
     if (speed_cfg) {
-      this.get_speed = t => sample_key_frames(speed_cfg["speed"]["list"], t) * (speed_cfg["min_mult"] ?? 1);
+      this.get_speed = t => sample_key_frames(speed_cfg["speed"]["list"], t, 0) * (speed_cfg["min_mult"] ?? 1);
     }
     const speed_static_cfg = config["behaviors"].find(b => b.type === "moveSpeedStatic")?.["config"];
     if (speed_static_cfg) {
