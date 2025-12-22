@@ -113,8 +113,11 @@ export class TextureUtil implements Disposable {
 export function get_texture_name_from_file_path(file_path: string): string {
   const file_name = file_path.substring(file_path.lastIndexOf("/") + 1);
   const clean_file_name = file_name.split(/[?#]/)[0];
-  const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
-  return name_without_ext;
+  if (typeof clean_file_name === "string") {
+    const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
+    return name_without_ext;
+  }
+  return file_name;
 }
 
 export async function generate_textures_from_spritesheet_tp(
@@ -156,7 +159,10 @@ export async function generate_textures_from_spritesheet_tp(
   // NOTE: use bracket notation, instead of dot when accessing from `json_data`,
   // it ensures minifiers doesn't mangle it
   for (let frame_name in json_data["frames"]) {
-    const data = json_data["frames"][frame_name]["frame"];
+    const data = json_data["frames"]?.[frame_name]?.["frame"];
+    if (!data) {
+      continue;
+    }
     canvas.width = Math.round(data["w"] * scale);
     canvas.height = Math.round(data["h"] * scale);
 

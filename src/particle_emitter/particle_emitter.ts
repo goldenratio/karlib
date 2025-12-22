@@ -150,12 +150,17 @@ export class ParticleEmitter implements Disposable {
     // update particles and cull
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
+      if (!p) {
+        continue;
+      }
       p.update(delta);
       if (!p.is_alive) {
         const removed_p_list = this.particles.splice(i, 1);
         for (let j = 0; j < removed_p_list.length; j++) {
           const culled_p = removed_p_list[j];
-          this.particles_pool_bag.release(culled_p);
+          if (culled_p) {
+            this.particles_pool_bag.release(culled_p);
+          }
         }
       }
     }
@@ -176,7 +181,10 @@ export class ParticleEmitter implements Disposable {
     }
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
-      this.particles[i].draw();
+      const p = this.particles[i];
+      if (p) {
+        p.draw();
+      }
     }
   }
 
