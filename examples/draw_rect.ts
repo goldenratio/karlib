@@ -13,7 +13,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   let vx = Math.random() * 10 - 5;
   let vy = Math.random() * 10 - 5;
 
-  const kl = new Karlib({ canvas, env: new BrowserEnv() });
+  const kl = new Karlib({ env: new BrowserEnv({ canvas }) });
 
   const ticker = new BrowserTicker();
   ticker.on_tick(({ delta_time }) => {

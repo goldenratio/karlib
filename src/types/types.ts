@@ -1,7 +1,9 @@
+import type { EventEmitterLike, EventEmitterOnOffLike } from "@goldenratio/core-utils";
 import type { SCALE_MODE } from "../constants.js";
 import type { EnvProvider } from "../env_provider/env_provider.js";
 import type { Texture } from "../texture.js";
 
+export type EventSourceLike = EventEmitterLike | EventEmitterOnOffLike;
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 export type OutlineStyle = string | CanvasGradient | CanvasPattern;
 
@@ -23,7 +25,6 @@ export interface Size {
 }
 
 export interface InitOptions {
-  readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   readonly env: EnvProvider;
   /**
    * set this to true for transparent background

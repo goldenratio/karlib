@@ -5,8 +5,7 @@ export const CANVAS_HEIGHT = 600;
 
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
   const kl = new Karlib({
-    canvas: canvas,
-    env: new BrowserEnv(),
+    env: new BrowserEnv({ canvas }),
   });
 
   await kl.load_texture("./button_square_flat.png");

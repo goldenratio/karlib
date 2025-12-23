@@ -6,8 +6,7 @@ export const CANVAS_HEIGHT = 600;
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   const kl = new Karlib({
-    canvas: canvas,
-    env: new BrowserEnv(),
+    env: new BrowserEnv({ canvas }),
   });
 
   for (let i = 0; i < 10; i++) {
