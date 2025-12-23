@@ -8,7 +8,7 @@ export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
 
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
-  const kl = new Karlib({ env: new BrowserEnv({ canvas }) });
+  const kl = new Karlib({ canvas, env: new BrowserEnv() });
 
   await kl.load_texture("./character_beige_front@{dpr}x.png", {
     available_dpr_scales: [1, 2],

@@ -36,11 +36,10 @@ export class Karlib implements Disposable {
   private readonly transparent_background: boolean;
 
   constructor(options: InitOptions) {
-    const { env, pixel_perfect = false, transparent_background = false } = options;
+    const { canvas, env, pixel_perfect = false, transparent_background = false } = options;
     this.pixel_perfect = pixel_perfect;
     this.transparent_background = transparent_background;
     this.env = env;
-    const canvas = this.env.get_primary_canvas();
     this.canvas_size = { width: canvas.width, height: canvas.height };
 
     const ctx = unwrap(canvas.getContext("2d", {

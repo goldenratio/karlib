@@ -1,19 +1,14 @@
 import type { Disposable } from "@goldenratio/core-utils";
 
 import { SCALE_MODE } from "../constants.js";
-import type { EventSourceLike, LoadTextureOptions } from "../types/types.js";
-import type { EnvOptions, EnvProvider } from "./env_provider.js";
+import type { LoadTextureOptions } from "../types/types.js";
+import type { EnvProvider } from "./env_provider.js";
 
 export class BrowserEnv implements EnvProvider, Disposable {
   private readonly dpr: number;
-  private readonly keyboard_source: EventSourceLike | undefined = undefined;
-  private readonly canvas_source: HTMLCanvasElement | OffscreenCanvas;
 
-  constructor(options: EnvOptions) {
+  constructor() {
     this.dpr = Math.ceil(window.devicePixelRatio || 1);
-    const { keyboard_source, canvas } = options;
-    this.canvas_source = canvas;
-    this.keyboard_source = keyboard_source;
   }
 
   dispose(): void {
@@ -22,14 +17,6 @@ export class BrowserEnv implements EnvProvider, Disposable {
 
   get_device_pixel_ratio(): number {
     return this.dpr
-  }
-
-  get_keyboard_source(): EventSourceLike | undefined {
-    return this.keyboard_source;
-  }
-
-  get_primary_canvas(): HTMLCanvasElement | OffscreenCanvas {
-    return this.canvas_source;
   }
 
   create_canvas(width: number, height: number): OffscreenCanvas {

@@ -14,7 +14,7 @@ export async function main(canvas: HTMLCanvasElement): Promise<void> {
   let vx = Math.random() * 10 - 5;
   let vy = Math.random() * 10 - 5;
 
-  const kl = new Karlib({ env: new BrowserEnv({ canvas }) });
+  const kl = new Karlib({ canvas, env: new BrowserEnv() });
 
   await kl.load_texture("./sample_background.png");
   await kl.load_texture("./character_green_front.png");

@@ -25,6 +25,7 @@ export interface Size {
 }
 
 export interface InitOptions {
+  readonly canvas: HTMLCanvasElement | OffscreenCanvas;
   readonly env: EnvProvider;
   /**
    * set this to true for transparent background

@@ -7,7 +7,8 @@ export const CANVAS_HEIGHT = 600;
 export async function main(canvas: HTMLCanvasElement): Promise<void> {
 
   const kl = new Karlib({
-    env: new BrowserEnv({ canvas }),
+    canvas,
+    env: new BrowserEnv(),
     // set this to `true` for pixel art style games
     pixel_perfect: true,
   });

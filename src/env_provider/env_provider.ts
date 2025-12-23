@@ -1,11 +1,6 @@
 import type { FixedLenArray } from "@goldenratio/core-utils";
 
-import type { EventSourceLike, LoadTextureOptions } from "../types/types.js";
-
-export interface EnvOptions {
-  readonly canvas: HTMLCanvasElement | OffscreenCanvas;
-  readonly keyboard_source?: EventSourceLike;
-}
+import type { LoadTextureOptions } from "../types/types.js";
 
 export interface EnvProvider {
   /**
@@ -38,8 +33,4 @@ export interface EnvProvider {
    * Returns integer, fallbacks to 1
    */
   get_device_pixel_ratio(): number;
-
-  get_keyboard_source(): EventSourceLike | undefined;
-
-  get_primary_canvas(): HTMLCanvasElement | OffscreenCanvas;
 }
