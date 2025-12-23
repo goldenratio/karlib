@@ -13,6 +13,19 @@ export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boole
 }
 
 /**
+ * Tells if Rectangle contains point (Point is inside rectangle)
+ * @returns boolean
+ */
+export function rect_contains_point(rect: Rectangle, point: Point): boolean {
+  return (
+    point.x >= rect.x &&
+    point.y >= rect.y &&
+    point.x < rect.x + rect.width &&
+    point.y < rect.y + rect.height
+  );
+}
+
+/**
  * Find angle between 2 points
  * @returns value in radians
  */
