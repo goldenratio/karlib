@@ -1,5 +1,21 @@
 import type { Disposable, Mutable } from "@goldenratio/core-utils";
 
+export interface Ticker {
+  /**
+   * Callback invoked on every frame update
+   */
+  on_tick(fn: TickerCallbackType): void;
+  /**
+   * Sets speed of the ticker.
+   * Value between 0 to 1
+   */
+  set_speed(value: number): void;
+  /**
+   * Returns current fps of the ticker
+   */
+  get_fps(): number;
+}
+
 export interface TickerData {
   /**
    * milliseconds elapsed from last updated.
@@ -28,7 +44,7 @@ export interface TickerData {
  */
 export type TickerCallbackType = (ticker_data: TickerData) => void;
 
-export class BrowserTicker implements Disposable {
+export class BrowserTicker implements Ticker, Disposable {
   // Target frames per millisecond
   private readonly target_fpms: number;
   private readonly max_elapsed_ms = 100;
@@ -58,6 +74,9 @@ export class BrowserTicker implements Disposable {
     this.elapsed_ms = 1 / this.target_fpms;
   }
 
+  /**
+   * @inheritdoc
+   */
   on_tick(fn: TickerCallbackType): void {
     if (this.raf_id !== -1) {
       // ticker already running
@@ -89,10 +108,16 @@ export class BrowserTicker implements Disposable {
     this.raf_id = globalThis.requestAnimationFrame(update_loop);
   }
 
+  /**
+   * @inheritdoc
+   */
   set_speed(value: number): void {
     this.speed = value;
   }
 
+  /**
+   * @inheritdoc
+   */
   get_fps(): number {
     return (1000 / this.elapsed_ms) | 0;
   }

@@ -50,7 +50,7 @@ export interface EmitterConfig {
   readonly blend_mode?: GlobalCompositeOperation;
 }
 
-export interface EmitterConfigValue<TValue> {
+export interface EmitterConfigValue<TValue extends number | string> {
   readonly time: number;
   readonly value: TValue;
 }

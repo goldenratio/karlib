@@ -6,6 +6,7 @@ import type { Point } from "../types/types.js";
 
 import { Particle } from "./particle.js";
 import type { BehaviorConfigOf, EmitterConfig } from "./types.js";
+import { rotate_point } from "../math_utils.js";
 
 /**
  * Particle Emitter
@@ -26,6 +27,8 @@ export class ParticleEmitter implements Disposable {
   private readonly spawn_burst_config?: BehaviorConfigOf<"spawnBurst">;
   private readonly spawn_shape_config?: BehaviorConfigOf<"spawnShape">;
 
+  private rotate_degrees: number = 0;
+  private rotate_radians: number = 0;
   private emitter_age: number;
   private spawn_timer: number;
   private emit: boolean;
@@ -35,22 +38,22 @@ export class ParticleEmitter implements Disposable {
   constructor(kl: Karlib, config: EmitterConfig) {
     this.spawn_timer = 0;
 
-    this.particles_per_wave = config.particles_per_wave ?? 1;
-    this.max_particles = config.max_particles ?? 20;
-    this.frequency = Math.max(0.0001, config.frequency); // seconds per particle
-    this.pos = { x: config.pos.x, y: config.pos.y };
+    this.particles_per_wave = config["particles_per_wave"] ?? 1;
+    this.max_particles = config["max_particles"] ?? 20;
+    this.frequency = Math.max(0.0001, config["frequency"]); // seconds per particle
+    this.pos = { x: config["pos"].x, y: config["pos"].y };
 
-    this.is_infinite = typeof config.emitter_lifetime === "undefined"
+    this.is_infinite = typeof config["emitter_lifetime"] === "undefined"
       ? true
-      : config.emitter_lifetime === -1;
+      : config["emitter_lifetime"] === -1;
 
     this.emitter_age = 0;
-    this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config.emitter_lifetime ?? 1);
-    this.emit = config.emit ?? true;
+    this.emitter_life = this.is_infinite ? Infinity : Math.max(0, config["emitter_lifetime"] ?? 1);
+    this.emit = config["emit"] ?? true;
 
     // --- detect & cache spawnBurst config ---
-    this.spawn_burst_config = config.behaviors.find(b => b.type === "spawnBurst")?.config;
-    this.spawn_shape_config = config.behaviors.find(b => b.type === "spawnShape")?.config;
+    this.spawn_burst_config = config["behaviors"].find(b => b.type === "spawnBurst")?.config;
+    this.spawn_shape_config = config["behaviors"].find(b => b.type === "spawnShape")?.config;
 
     this.particles_pool_bag = new PoolBag({
       create_pooled_item: () => new Particle(kl, config),
@@ -87,6 +90,14 @@ export class ParticleEmitter implements Disposable {
   }
 
   /**
+   * Tells If the emitter has finished emitting particles.
+   * If lifetime is -1, this will always be false
+   */
+  get_is_completed(): boolean {
+    return this.completed;
+  }
+
+  /**
    * Changes the spawn position of the emitter.
    * Changing spawn position will restart the emitter
    * @param x The new x value of the spawn position for the emitter.
@@ -101,16 +112,30 @@ export class ParticleEmitter implements Disposable {
   }
 
   /**
-   * Update loop
-   * @param elapsed_ms milliseconds elapsed from last updated. Ideally value should be 16.66 ms
+   * Sets the rotation of the emitter to a new value. This rotates the spawn position in addition
+   * to particle direction.
    */
-  update(elapsed_ms: number): void {
+  update_spawn_rotate(new_rotate_degrees: number): void {
+    if (this.rotate_degrees !== new_rotate_degrees) {
+      this.rotate_degrees = new_rotate_degrees;
+      this.rotate_radians = to_radians(this.rotate_degrees);
+    }
+  }
+
+  /**
+   * Update loop
+   * @param delta_time Scalar representing the delta time factor (value between 0 to 1)
+   */
+  update(delta_time: number): void {
     if (this.completed) {
       return;
     }
 
-    const delta = elapsed_ms * 0.001; // basically 16.66ms / 1000
-    this.spawn_timer += delta; // ideally, 0.0166
+    // const delta = elapsed_ms * 0.001; // basically 16.66ms / 1000
+    // this.spawn_timer += delta; // ideally, 0.0166
+
+    const delta = delta_time * 0.0166; // 0.0166 is (1 / 60);
+    this.spawn_timer += delta;
 
     while (this.emit
       && this.spawn_timer >= this.frequency
@@ -125,12 +150,17 @@ export class ParticleEmitter implements Disposable {
     // update particles and cull
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
+      if (!p) {
+        continue;
+      }
       p.update(delta);
       if (!p.is_alive) {
         const removed_p_list = this.particles.splice(i, 1);
         for (let j = 0; j < removed_p_list.length; j++) {
           const culled_p = removed_p_list[j];
-          this.particles_pool_bag.release(culled_p);
+          if (culled_p) {
+            this.particles_pool_bag.release(culled_p);
+          }
         }
       }
     }
@@ -151,7 +181,10 @@ export class ParticleEmitter implements Disposable {
     }
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
-      this.particles[i].draw();
+      const p = this.particles[i];
+      if (p) {
+        p.draw();
+      }
     }
   }
 
@@ -168,14 +201,30 @@ export class ParticleEmitter implements Disposable {
       if (shape_cfg) {
         if (shape_cfg.type === "rect") {
           const r = shape_cfg.data;
-          const sx = this.pos.x + r.x + Math.random() * r.w;
-          const sy = this.pos.y + r.y + Math.random() * r.h;
+          // Sample local point in rect space (relative to emitter origin)
+          const local_x = r.x + Math.random() * r.w;
+          const local_y = r.y + Math.random() * r.h;
+
+          let sx: number;
+          let sy: number;
+          if (this.rotate_radians === 0) {
+            sx = this.pos.x + local_x;
+            sy = this.pos.y + local_y;
+          } else {
+            // Rotate local offset around emitter origin
+            const o = rotate_point(local_x, local_y, this.rotate_radians);
+            sx = this.pos.x + o.x;
+            sy = this.pos.y + o.y;
+          }
           particle.update_spawn_pos(sx, sy);
           // direction/rotation come from particle's seeded behaviors
         } else if (shape_cfg.type === "torus") {
           const t = shape_cfg.data;
-          const cx = this.pos.x + t.x;
-          const cy = this.pos.y + t.y;
+
+          // Rotate torus center offset around emitter origin
+          const center_off = this.rotate_radians === 0 ? t : rotate_point(t.x, t.y, this.rotate_radians);
+          const cx = this.pos.x + center_off.x;
+          const cy = this.pos.y + center_off.y;
 
           // sample angle uniformly
           const angle = Math.random() * Math.PI * 2;
@@ -197,10 +246,11 @@ export class ParticleEmitter implements Disposable {
         }
       } else if (burst_cfg) {
         // Position on an arc/ring at fixed distance from emitter origin
-        const angle_rad = burst_cfg.spacing === 0
+        let angle_rad = burst_cfg.spacing === 0
           ? Math.random() * Math.PI * 2
           : to_radians(burst_cfg.start) + (to_radians(burst_cfg.spacing) * i);
 
+        angle_rad += this.rotate_radians;
         const x = this.pos.x + Math.cos(angle_rad);
         const y = this.pos.y + Math.sin(angle_rad);
         particle.update_spawn_pos(x, y);
@@ -209,6 +259,9 @@ export class ParticleEmitter implements Disposable {
       } else {
         // Default: spawnPoint at the emitter origin
         particle.update_spawn_pos(this.pos.x, this.pos.y);
+        if (this.rotate_radians !== 0) {
+          particle.seed_direction_from_angle(this.rotate_radians);
+        }
       }
 
       this.particles.push(particle);

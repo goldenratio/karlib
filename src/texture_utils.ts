@@ -3,7 +3,8 @@ import { unwrap, type Disposable } from "@goldenratio/core-utils";
 import { Texture } from "./texture.js";
 import type { EnvProvider } from "./env_provider/env_provider.js";
 import { SCALE_MODE } from "./constants.js";
-import type { SpriteSheetData, SpriteSheetLoadTextureOptions } from "./types/index.js";
+import type { SpriteSheetLoadTextureOptions } from "./types/types.js";
+import type { SpriteSheetData } from "./types/spritesheet_types.js";
 
 export class TextureUtil implements Disposable {
   private readonly cache: Map<string, Texture> = new Map();
@@ -73,10 +74,9 @@ export class TextureUtil implements Disposable {
       pattern = this.ctx.createPattern(img_src, repetition) ?? undefined;
     } catch (err) {
       if (err instanceof TypeError) {
-        // TODO: REMOVE, when safari 16.x is no longer supported
+        // TODO: known issue
         // iOS safari 16.x, doesn't support ImageBitmap in createPattern method
-        // Apple still doesn't fix this shit.
-        // fallback impl
+        // It throws TypeError, hence the below fallback implementation
         pattern = this.create_canvas_pattern_from_canvas(source, repetition);
       }
     }
@@ -89,7 +89,7 @@ export class TextureUtil implements Disposable {
 
   private create_canvas_pattern_from_canvas(source: Texture, repetition: string): CanvasPattern | undefined {
     const img_src = source.get_src();
-    const temp_canvas = this.env.create_canvas(img_src.width, img_src.height);
+    const temp_canvas: OffscreenCanvas = this.env.create_canvas(img_src.width, img_src.height);
     const temp_context2d = temp_canvas.getContext("2d");
     if (temp_context2d) {
       const scale_mode = source.get_scale_mode();
@@ -113,8 +113,11 @@ export class TextureUtil implements Disposable {
 export function get_texture_name_from_file_path(file_path: string): string {
   const file_name = file_path.substring(file_path.lastIndexOf("/") + 1);
   const clean_file_name = file_name.split(/[?#]/)[0];
-  const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
-  return name_without_ext;
+  if (typeof clean_file_name === "string") {
+    const name_without_ext = clean_file_name.replace(/\.[^/.]+$/, "");
+    return name_without_ext;
+  }
+  return file_name;
 }
 
 export async function generate_textures_from_spritesheet_tp(
@@ -156,7 +159,10 @@ export async function generate_textures_from_spritesheet_tp(
   // NOTE: use bracket notation, instead of dot when accessing from `json_data`,
   // it ensures minifiers doesn't mangle it
   for (let frame_name in json_data["frames"]) {
-    const data = json_data["frames"][frame_name]["frame"];
+    const data = json_data["frames"]?.[frame_name]?.["frame"];
+    if (!data) {
+      continue;
+    }
     canvas.width = Math.round(data["w"] * scale);
     canvas.height = Math.round(data["h"] * scale);
 

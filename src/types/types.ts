@@ -1,7 +1,9 @@
+import type { EventEmitterLike, EventEmitterOnOffLike } from "@goldenratio/core-utils";
 import type { SCALE_MODE } from "../constants.js";
 import type { EnvProvider } from "../env_provider/env_provider.js";
 import type { Texture } from "../texture.js";
 
+export type EventSourceLike = EventEmitterLike | EventEmitterOnOffLike;
 export type FillStyle = string | CanvasGradient | CanvasPattern;
 export type OutlineStyle = string | CanvasGradient | CanvasPattern;
 
@@ -48,6 +50,9 @@ export interface DrawLineOptions {
    * @default "butt"
    */
   readonly line_cap?: CanvasLineCap;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
   /**
    * @default 'source-over'
@@ -72,7 +77,13 @@ export interface DrawRectangleOptions {
    */
   readonly rotate?: number;
   readonly pivot?: Point;
+  /**
+   * value between 0 to 1
+   */
   readonly scale?: number | Point;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
   /**
    * @default 'source-over'
@@ -88,7 +99,13 @@ export interface DrawCircleOptions {
   readonly outline_size?: number;
   readonly outline_style?: OutlineStyle;
   readonly pivot?: Point;
+  /**
+   * value between 0 to 1
+   */
   readonly scale?: number | Point;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
   /**
    * @default 'source-over'
@@ -107,7 +124,13 @@ export interface DrawTextureOptions {
    */
   readonly rotate?: number;
   readonly pivot?: Point;
+  /**
+   * value between 0 to 1
+   */
   readonly scale?: number | Point;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
   readonly tint_color?: string;
   readonly tint_alpha?: number;
@@ -130,7 +153,13 @@ export interface DrawTextureTileOptions {
    * in degrees
    */
   readonly tile_rotate?: number;
+  /**
+   * value between 0 to 1
+   */
   readonly tile_scale?: number | Point;
+  /**
+   * value between 0 to 1
+   */
   readonly tile_alpha?: number;
   /**
    * @default 'source-over'
@@ -148,7 +177,13 @@ export interface DrawNineSliceTextureOptions {
   readonly bottom_height: number;
   readonly width: number;
   readonly height: number;
+  /**
+   * value between 0 to 1
+   */
   readonly alpha?: number;
+  /**
+   * value between 0 to 1
+   */
   readonly pivot?: Point;
   /**
    * @default 'source-over'

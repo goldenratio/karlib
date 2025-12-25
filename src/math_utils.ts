@@ -1,5 +1,5 @@
 import type { Mutable } from "@goldenratio/core-utils";
-import type { Point, Rectangle } from "./types/index.js";
+import type { Point, Rectangle } from "./types/types.js";
 
 /**
  * Tells if 2 Rectangles are colliding
@@ -9,6 +9,19 @@ export function is_rect_colliding(target1: Rectangle, target2: Rectangle): boole
     ((target2.x + target2.width) < target1.x) ||
     (target2.y > (target1.y + target1.height)) ||
     ((target2.y + target2.height) < target1.y)
+  );
+}
+
+/**
+ * Tells if Rectangle contains point (Point is inside rectangle)
+ * @returns boolean
+ */
+export function rect_contains_point(rect: Rectangle, point: Point): boolean {
+  return (
+    point.x >= rect.x &&
+    point.y >= rect.y &&
+    point.x < rect.x + rect.width &&
+    point.y < rect.y + rect.height
   );
 }
 
@@ -67,4 +80,20 @@ export function copy_rect(dest: Partial<Mutable<Rectangle>>, src: Partial<Rectan
 export function copy_point(dest: Partial<Mutable<Point>>, src: Partial<Point>): void {
   dest.x = src.x ?? dest.x;
   dest.y = src.y ?? dest.y;
+}
+
+/**
+ * Rotates a point by a given angle.
+ * @param px
+ * @param py
+ * @param angle_radians The angle to rotate by in radians
+ * @returns a new Point
+ */
+export function rotate_point(px: number, py: number, angle_radians: number): Point {
+  const c = Math.cos(angle_radians);
+  const s = Math.sin(angle_radians);
+  return {
+    x: px * c - py * s,
+    y: px * s + py * c
+  };
 }
