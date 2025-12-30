@@ -156,6 +156,10 @@ export class Karlib implements Disposable {
       scale = 1, alpha = 1, blend_mode
     } = options;
 
+    if (alpha <= 0) {
+      return;
+    }
+
     const ctx = this.context2d;
 
     const pivot_x = (pivot.x >= 0 && pivot.x <= 1) ? pivot.x * width : pivot.x;
@@ -164,7 +168,7 @@ export class Karlib implements Disposable {
     const sx = typeof scale === "number" ? scale : scale.x;
     const sy = typeof scale === "number" ? scale : scale.y;
 
-    if (sx === 0 || sy === 0 || alpha === 0) {
+    if (sx === 0 || sy === 0) {
       return;
     }
 
@@ -235,6 +239,10 @@ export class Karlib implements Disposable {
       scale = 1, alpha = 1, blend_mode
     } = options;
 
+    if (alpha <= 0) {
+      return;
+    }
+
     const ctx = this.context2d;
 
     // The circle’s bounding box is diameter x diameter
@@ -252,7 +260,7 @@ export class Karlib implements Disposable {
     const sx = typeof scale === "number" ? scale : scale.x;
     const sy = typeof scale === "number" ? scale : scale.y;
 
-    if (sx === 0 || sy === 0 || alpha === 0) {
+    if (sx === 0 || sy === 0) {
       return;
     }
 
@@ -291,6 +299,10 @@ export class Karlib implements Disposable {
       source_rect, blend_mode
     } = options;
 
+    if (alpha <= 0) {
+      return;
+    }
+
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
@@ -308,7 +320,7 @@ export class Karlib implements Disposable {
     const sx = (typeof scale === "number" ? scale : scale.x) / texture_dpr_scale;
     const sy = (typeof scale === "number" ? scale : scale.y) / texture_dpr_scale;
 
-    if (sx === 0 || sy === 0 || alpha <= 0) {
+    if (sx === 0 || sy === 0) {
       return;
     }
 
@@ -357,6 +369,10 @@ export class Karlib implements Disposable {
       blend_mode
     } = options;
 
+    if (tile_alpha <= 0) {
+      return;
+    }
+
     const texture = typeof texture_opt === "string"
       ? unwrap(this.res_textures.get(texture_opt), `texture ${texture_opt} does not exist`)
       : texture_opt;
@@ -373,7 +389,7 @@ export class Karlib implements Disposable {
     const sx = (typeof tile_scale === "number" ? tile_scale : tile_scale.x) / dpr_scale;
     const sy = (typeof tile_scale === "number" ? tile_scale : tile_scale.y) / dpr_scale;
 
-    if (sx === 0 || sy === 0 || tile_alpha <= 0) {
+    if (sx === 0 || sy === 0) {
       return;
     }
 
