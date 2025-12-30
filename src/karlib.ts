@@ -63,6 +63,7 @@ export class Karlib implements Disposable {
   /**
    * Loads image and converts it to texture.
    * If the image path contains token "{dpr}", then when loading the image,"{dpr}" value is replaced with device-pixel-ratio.
+   * If texture fails to load, it returns `undefined`
    */
   async load_texture(image_file_path: string, options?: LoadTextureOptions): Promise<Texture | undefined> {
     const scale_mode = this.pixel_perfect ? SCALE_MODE.Nearest : SCALE_MODE.Linear;
