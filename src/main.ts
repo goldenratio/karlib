@@ -12,3 +12,4 @@ export * from "./karlib.js";
 export * from "./particle_emitter/types.js";
 export * from "./particle_emitter/particle_emitter.js";
 export * from "./animated_texture.js";
+export * from "./tween.js";
