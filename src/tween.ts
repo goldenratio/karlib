@@ -37,6 +37,9 @@ export class Tween implements Disposable {
   }
 
   /**
+   * Computes an interpolated value between `from` and `to` using an easing function.
+   * This should typically be called once per frame.
+   *
    * @param {symbol} owner - Unique identifier that will own this tween
    * @param {number} delta_time - Scalar representing the delta time factor (value is between 0 to 1)
    * @param {number} duration_ms - Total time in milliseconds
@@ -76,7 +79,10 @@ export class Tween implements Disposable {
   }
 
   /**
-   * You need to call this, If you want to restart the animation
+   * Clears the tween state for the given owner.
+   * Call this when you want to restart the animation from the beginning.
+   *
+   * @param {symbol} owner - The animation owner whose state should be reset.
    */
   clear(owner: symbol): void {
     this.states.delete(owner);
