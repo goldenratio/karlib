@@ -27,6 +27,7 @@ const MS_PER_FRAME = 1 / (60 / 1000); // 16.666666666666668
 
 export class Tween implements Disposable {
   private states: Map<symbol, number>;
+  private delta_time: number = 1;
 
   constructor() {
     this.states = new Map();
@@ -37,24 +38,31 @@ export class Tween implements Disposable {
   }
 
   /**
+   * set delta time
+   * @param {number} delta_time - Scalar representing the delta time factor (value is between 0 to 1)
+   */
+  set_delta_time(delta_time: number): void {
+    this.delta_time = delta_time;
+  }
+
+  /**
    * Computes an interpolated value between `from` and `to` using an easing function.
    * This should typically be called once per frame.
    *
    * @param {symbol} owner - Unique identifier that will own this tween
-   * @param {number} delta_time - Scalar representing the delta time factor (value is between 0 to 1)
-   * @param {number} duration_ms - Total time in milliseconds
    * @param {number} from - Start value
    * @param {number} to - End value
    * @param {EasingType | EasingFn} type - Easing name
+   * @param {number} duration_ms - Total time in milliseconds
    * @param {number} [delay_ms=0] - Time to wait before starting interpolation
    */
-  to(owner: symbol, delta_time: number, duration_ms: number, from: number, to: number, type: EasingType | EasingFn, delay_ms: number = 0): number {
+  to(owner: symbol, from: number, to: number, type: EasingType | EasingFn, duration_ms: number, delay_ms: number = 0): number {
     if (duration_ms <= 0) {
       return to;
     }
 
     // Convert scalar delta to milliseconds and update state
-    const elapsed_ms = (this.states.get(owner) ?? 0) + (delta_time * MS_PER_FRAME);
+    const elapsed_ms = (this.states.get(owner) ?? 0) + (this.delta_time * MS_PER_FRAME);
 
     const total_ms = delay_ms + duration_ms;
     const clamped_ms = clamp(elapsed_ms, 0, total_ms);
