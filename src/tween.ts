@@ -26,15 +26,17 @@ export type EasingFn = (t: number) => number;
 const MS_PER_FRAME = 1 / (60 / 1000); // 16.666666666666668
 
 export class Tween implements Disposable {
-  private states: Map<symbol, number>;
+  private elapsed_ms_state: Map<symbol, number>;
+  private completed_state: Map<symbol, boolean>;
   private delta_time: number = 1;
 
   constructor() {
-    this.states = new Map();
+    this.elapsed_ms_state = new Map();
+    this.completed_state = new Map();
   }
 
   dispose(): void {
-    this.states.clear();
+    this.elapsed_ms_state.clear();
   }
 
   /**
@@ -62,24 +64,25 @@ export class Tween implements Disposable {
     }
 
     // Convert scalar delta to milliseconds and update state
-    const elapsed_ms = (this.states.get(owner) ?? 0) + (this.delta_time * MS_PER_FRAME);
+    const elapsed_ms = (this.elapsed_ms_state.get(owner) ?? 0) + (this.delta_time * MS_PER_FRAME);
 
     const total_ms = delay_ms + duration_ms;
-    const clamped_ms = clamp(elapsed_ms, 0, total_ms);
-    this.states.set(owner, clamped_ms);
+    const clamped_elapsed_ms = clamp(elapsed_ms, 0, total_ms);
+    this.elapsed_ms_state.set(owner, clamped_elapsed_ms);
 
     // Still in delay phase
-    if (clamped_ms < delay_ms) {
+    if (clamped_elapsed_ms < delay_ms) {
       return from;
     }
 
     // Animation finished
-    if (clamped_ms >= total_ms) {
+    if (clamped_elapsed_ms >= total_ms) {
+      this.completed_state.set(owner, true);
       return to;
     }
 
     // Calculate progress based on ms
-    const animation_ms = clamped_ms - delay_ms;
+    const animation_ms = clamped_elapsed_ms - delay_ms;
     const t = animation_ms / duration_ms;
     const eased = typeof type === "string" ? easing[type](t) : type(t);
 
@@ -93,6 +96,14 @@ export class Tween implements Disposable {
    * @param {symbol} owner - The animation owner whose state should be reset.
    */
   clear(owner: symbol): void {
-    this.states.delete(owner);
+    this.elapsed_ms_state.delete(owner);
+    this.completed_state.delete(owner);
+  }
+
+  /**
+   * Tells if tween animation is finished or not
+   */
+  is_completed(owner: symbol): boolean {
+    return this.completed_state.get(owner) ?? false;
   }
 }
