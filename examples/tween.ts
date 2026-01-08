@@ -1,5 +1,7 @@
-import { Mutable } from "@goldenratio/core-utils";
-import { BrowserEnv, BrowserTicker, DrawTextureOptions, Karlib, Tween } from "../src/main.js";
+import type { Mutable } from "@goldenratio/core-utils";
+
+import { BrowserEnv, BrowserTicker, Karlib, Tween } from "../src/main.js";
+import type { DrawTextureOptions } from "../src/main.js";
 
 export const CANVAS_WIDTH = 800;
 export const CANVAS_HEIGHT = 600;
