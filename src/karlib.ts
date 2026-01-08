@@ -24,6 +24,7 @@ import type {
 } from "./types/types.js";
 import type { SpriteSheetData } from "./types/spritesheet_types.js";
 import { Camera2DUtil } from "./camera_utils.js";
+import { draw_slice } from "./internals/nine_slice_utils.js";
 
 export class Karlib implements Disposable {
   private readonly context2d: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
@@ -497,71 +498,63 @@ export class Karlib implements Disposable {
     ctx.imageSmoothingEnabled = smooth_texture;
 
     // --- Draw all 9 slices ---
-    // A helper for drawing a slice (Source x, y, w, h -> Dest x, y, w, h)
-    const draw_slice = (sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) => {
-      if (sw > 0 && sh > 0 && dw > 0 && dh > 0) {
-        const native_sx = sx * dpr_scale;
-        const native_sy = sy * dpr_scale;
-        const native_sw = sw * dpr_scale;
-        const native_sh = sh * dpr_scale;
-
-        ctx.drawImage(
-          image,
-          native_sx | 0, native_sy | 0, native_sw | 0, native_sh | 0,
-          dx | 0, dy | 0, dw | 0, dh | 0
-        );
-      }
-    };
-
     // 1. Top-Left Corner
-    draw_slice(0, 0, left_width, top_height, 0, 0, left_width, top_height);
+    draw_slice(0, 0, left_width, top_height, 0, 0, left_width, top_height, dpr_scale, image, ctx);
 
     // 2. Top Edge
     draw_slice(
       left_width, 0, source_center_width, top_height,
-      left_width, 0, dest_center_width - left_width, top_height
+      left_width, 0, dest_center_width - left_width, top_height,
+      dpr_scale, image, ctx
     );
 
     // 3. Top-Right Corner
     draw_slice(
       texture_width - right_width, 0, right_width, top_height,
-      width - right_width, 0, right_width, top_height
+      width - right_width, 0, right_width, top_height,
+      dpr_scale, image, ctx
     );
 
     // 4. Left Edge
     draw_slice(
       0, top_height, left_width, source_center_height,
-      0, top_height, left_width, dest_center_height - top_height
+      0, top_height, left_width, dest_center_height - top_height,
+      dpr_scale, image, ctx
     );
 
     // 5. Center
     draw_slice(
       left_width, top_height, source_center_width, source_center_height,
-      left_width, top_height, dest_center_width - left_width, dest_center_height - top_height
+      left_width, top_height, dest_center_width - left_width, dest_center_height - top_height,
+      dpr_scale, image, ctx
     );
 
     // 6. Right Edge
     draw_slice(
       texture_width - right_width, top_height, right_width, source_center_height,
-      width - right_width, top_height, right_width, dest_center_height - top_height
+      width - right_width, top_height, right_width, dest_center_height - top_height,
+      dpr_scale, image, ctx
     );
 
     // 7. Bottom-Left Corner
     draw_slice(
       0, texture_height - bottom_height, left_width, bottom_height,
-      0, height - bottom_height, left_width, bottom_height
+      0, height - bottom_height, left_width, bottom_height,
+      dpr_scale, image, ctx
     );
 
     // 8. Bottom Edge
     draw_slice(
       left_width, texture_height - bottom_height, source_center_width, bottom_height,
-      left_width, height - bottom_height, dest_center_width - left_width, bottom_height
+      left_width, height - bottom_height, dest_center_width - left_width, bottom_height,
+      dpr_scale, image, ctx
     );
 
     // 9. Bottom-Right Corner
     draw_slice(
       texture_width - right_width, texture_height - bottom_height, right_width, bottom_height,
-      width - right_width, height - bottom_height, right_width, bottom_height
+      width - right_width, height - bottom_height, right_width, bottom_height,
+      dpr_scale, image, ctx
     );
 
     ctx.restore();
